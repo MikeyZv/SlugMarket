@@ -16,12 +16,24 @@ export default function Navbar() {
             Browse
           </Link>
           <Link
+            to="/messaging"
+            className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+          >
+            Messaging
+          </Link>
+          <Link
             to="/create-listing"
             className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
 
 
           >
             + Post a Listing
+          </Link>
+          <Link
+            to="/signin"
+            className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+          >
+            Login
           </Link>
         </div>
       </div>
