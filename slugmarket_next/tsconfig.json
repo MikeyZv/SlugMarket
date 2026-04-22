@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "../SlugMarketApp/src/pages/LoginPage.tsx", "../SlugMarketApp/src/pages/MessagingPage.tsx", "../SlugMarketApp/src/pages/CreateListingPage.tsx"  ],
   "exclude": ["node_modules"]
 }
