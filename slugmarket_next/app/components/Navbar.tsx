@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/", label: "Home" },
   { href: "/search", label: "Search" },
-  { href: "/", label: "Browse" },
+  { href: "/browse", label: "Browse" },
   { href: "/products/create", label: "Sell" },
   { href: "/messages", label: "Messages" },
   { href: "/a67", label: "Profile" }, // replace later with real username
