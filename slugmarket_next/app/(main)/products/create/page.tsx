@@ -1,7 +1,8 @@
-
 "use client"
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
 type Condition = typeof CONDITIONS[number]
@@ -15,6 +16,7 @@ interface ListingForm {
 }
 
 export default function CreateListingPage() {
+  const router = useRouter()
   const [form, setForm] = useState<ListingForm>({
     title: '',
     price: '',
@@ -23,6 +25,8 @@ export default function CreateListingPage() {
     image: null,
   })
   const [preview, setPreview] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleChange(
@@ -41,19 +45,48 @@ export default function CreateListingPage() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    console.log('Listing submitted:', {
-      title: form.title,
-      price: parseFloat(form.price),
-      description: form.description,
-      condition: form.condition,
-      image: form.image,
-    })
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Upload image to storage if provided
+      let image_url: string | null = null
+      if (form.image) {
+        const ext = form.image.name.split('.').pop()
+        const fileName = `${Date.now()}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('listing-images')
+          .upload(fileName, form.image)
+        if (uploadError) throw new Error(uploadError.message)
+        const { data: { publicUrl } } = supabase.storage
+          .from('listing-images')
+          .getPublicUrl(fileName)
+        image_url = publicUrl
+      }
+
+      const { error: insertError } = await supabase.from('listings').insert({
+        title: form.title,
+        price: parseFloat(form.price),
+        description: form.description,
+        condition: form.condition,
+        image_url,
+      })
+      if (insertError) throw new Error(insertError.message)
+
+      router.push('/products')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Something went wrong.'
+      console.error('Listing insert error:', message)
+      setError(message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <main className="max-w-2xl mx-auto px-6 py-12">
+    <main className="max-w-2xl mx-auto px-6 py-12 bg-white-100">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Post a Listing</h1>
       <p className="text-gray-500 mb-8">Fill in the details about what you're selling.</p>
 
@@ -179,11 +212,13 @@ export default function CreateListingPage() {
         </div>
 
         {/* Submit */}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base"
+          disabled={loading}
+          className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base"
         >
-          Post Listing
+          {loading ? 'Posting…' : 'Post Listing'}
         </button>
       </form>
     </main>
