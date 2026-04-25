@@ -1,12 +1,15 @@
-"use client"
+"use client" // Required for useState, useRef, and event handlers
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+// Fixed list of allowed condition values for a listing
 const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
+// Derive the union type from the array so it stays in sync automatically
 type Condition = typeof CONDITIONS[number]
 
+// Shape of the form
 interface ListingForm {
   title: string
   price: string
@@ -17,6 +20,8 @@ interface ListingForm {
 
 export default function CreateListingPage() {
   const router = useRouter()
+
+  // All form field values tracked as a single state object
   const [form, setForm] = useState<ListingForm>({
     title: '',
     price: '',
@@ -24,17 +29,26 @@ export default function CreateListingPage() {
     condition: '',
     image: null,
   })
+
+  // Object URL for the selected image, used to show a local preview before upload
   const [preview, setPreview] = useState<string | null>(null)
+  // Prevents double-submission and disables the submit button while the request is in flight
   const [loading, setLoading] = useState(false)
+  // Holds any error message surfaced to the user
   const [error, setError] = useState<string | null>(null)
+  // Ref to the hidden <input type="file"> so the styled drop-zone div can trigger it
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Generic change handler shared by text inputs, textarea, and select.
+  // Uses the element's `name` attribute as the form key, so no per-field handler is needed.
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  // Stores the selected File object in form state and generates a temporary
+  // object URL so the image can be previewed locally without uploading first.
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
     setForm((prev) => ({ ...prev, image: file }))
@@ -45,27 +59,31 @@ export default function CreateListingPage() {
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  // Handles form submission: uploads the image (if any), then inserts the listing row.
+  async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      // Upload image to storage if provided
+      // Upload image to Supabase Storage if the user selected one
       let image_url: string | null = null
       if (form.image) {
+        // Use a timestamp-based filename to avoid collisions in the bucket
         const ext = form.image.name.split('.').pop()
         const fileName = `${Date.now()}.${ext}`
         const { error: uploadError } = await supabase.storage
           .from('listing-images')
           .upload(fileName, form.image)
         if (uploadError) throw new Error(uploadError.message)
+        // Retrieve the publicly accessible URL for the uploaded file
         const { data: { publicUrl } } = supabase.storage
           .from('listing-images')
           .getPublicUrl(fileName)
         image_url = publicUrl
       }
 
+      // Insert the listing record; price is stored as a float, not a string
       const { error: insertError } = await supabase.from('listings').insert({
         title: form.title,
         price: parseFloat(form.price),
@@ -75,18 +93,21 @@ export default function CreateListingPage() {
       })
       if (insertError) throw new Error(insertError.message)
 
+      // Redirect to the products listing page on success
       router.push('/products')
     } catch (err: unknown) {
+      // Narrow the unknown error to extract a human-readable message
       const message = err instanceof Error ? err.message : 'Something went wrong.'
       console.error('Listing insert error:', message)
       setError(message)
     } finally {
+      // Always re-enable the submit button regardless of success or failure
       setLoading(false)
     }
   }
 
   return (
-    <main className="max-w-2xl mx-auto px-6 py-12 bg-white-100">
+    <main className="max-w-2xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Post a Listing</h1>
       <p className="text-gray-500 mb-8">Fill in the details about what you're selling.</p>
 
@@ -197,6 +218,8 @@ export default function CreateListingPage() {
             />
           </div>
           {preview && (
+            /* Clears the preview, removes the file from state, and resets the
+                 file input value so the same file can be re-selected if needed */
             <button
               type="button"
               onClick={() => {
