@@ -2,16 +2,38 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Credentials:", { username, email, password });
+    setLoading(true);
+    setError(null);
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username }, // stored in user metadata
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setError(error.message);
+    } else {
+      router.push("/");
+    }
   }
 
   function togglePasswordVisibility() {
@@ -75,11 +97,14 @@ export default function SignUpPage() {
             </button>
           </div>
 
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-40"
+            disabled={loading}
+            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-40 disabled:opacity-50"
           >
-            Create Account
+            {loading ? "Creating…" : "Create Account"}
           </button>
 
           <p>
