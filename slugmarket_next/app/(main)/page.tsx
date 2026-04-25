@@ -1,7 +1,9 @@
 import Image from "next/image";
 import ListingCard, { mockListings } from "../components/ListingCard"
+import { fetchProducts } from "@/lib/fetchProducts";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const products = await fetchProducts();
   return (
     <>
       <main className="max-w-5xl mx-auto px-6 py-16 text-center">
@@ -10,9 +12,9 @@ export default function HomePage() {
           Buy and sell with fellow UCSC students.
         </p>
         <p className="text-gray-400 italic">Listings will appear here soon.</p>
-        {mockListings.map((listing) => (
+         {products.map((listing) => (
         <ListingCard key={listing.id} listing={listing} />
-      ))}
+      ))} 
       </main>
     </>
   )
