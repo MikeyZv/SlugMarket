@@ -2,15 +2,31 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function SignInPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Credentials:", { email, password });
+    setLoading(true);
+    setError(null);
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    setLoading(false);
+
+    if (error) {
+      setError(error.message); // e.g. "Invalid login credentials"
+    } else {
+      router.push("/");
+    }
   }
 
   function togglePasswordVisibility() {
@@ -62,11 +78,14 @@ export default function SignInPage() {
             </button>
           </div>
 
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-40"
+            disabled={loading}
+            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-40 disabled:opacity-50"
           >
-            Log In
+            {loading ? "Signing in…" : "Log In"}
           </button>
 
           <p>

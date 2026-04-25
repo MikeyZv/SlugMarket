@@ -16,8 +16,14 @@ export default function SignUpPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    if (!email.endsWith("@ucsc.edu")) {
+      setError("Only @ucsc.edu email addresses are allowed.");
+      return;
+    }
+
+    setLoading(true);
 
     const { error } = await supabase.auth.signUp({
       email,
