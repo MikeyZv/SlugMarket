@@ -32,7 +32,7 @@ type Listing = {
   image_url?: string | null;
 };
 
-export default function ListingCard({ listing }: { listing: Listing }) {
+export default function ListingCard({ listing, priority }: { listing: Listing; priority?: boolean }) {
   return (
     <div className="rounded-xl border p-4 shadow-sm min-w-[250px]">
       <div className="mb-3 flex h-40 items-center justify-center rounded-lg bg-gray-100 overflow-hidden relative">
@@ -43,6 +43,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover rounded-lg"
+            priority={priority}
           />
         ) : (
           <span className="text-gray-400 text-sm">No image</span>
