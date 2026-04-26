@@ -94,7 +94,7 @@ export default function CreateListingPage() {
       if (insertError) throw new Error(insertError.message)
 
       // Redirect to the products listing page on success
-      router.push('/products')
+      router.push('/')
     } catch (err: unknown) {
       // Narrow the unknown error to extract a human-readable message
       const message = err instanceof Error ? err.message : 'Something went wrong.'
