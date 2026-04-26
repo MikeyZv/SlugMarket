@@ -11,9 +11,11 @@ export default async function HomePage() {
           Buy and sell with fellow UCSC students.
         </p>
         <p className="text-gray-400 italic">Listings will appear here soon.</p>
+        {/* grid-cols-1 (Mobile), sm (Small Devices), lg (Computers/Laptops) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 auto-rows-fr">
          {products.map((listing) => (
         <ListingCard key={listing.id} listing={listing} />
-      ))} 
+      ))} </div>
       </main>
     </>
   )

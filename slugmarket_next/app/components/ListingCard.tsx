@@ -33,7 +33,7 @@ type Listing = {
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   return (
-    <div className="rounded-xl border p-4 shadow-sm">
+    <div className="rounded-xl border p-4 shadow-sm min-w-[250px]">
       <div className="mb-3 flex h-40 items-center justify-center rounded-lg bg-gray-100">
       </div>
 
