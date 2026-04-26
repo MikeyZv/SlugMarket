@@ -84,7 +84,7 @@ export default function CreateListingPage() {
       }
 
       // Insert the listing record; price is stored as a float, not a string
-      const { error: insertError } = await supabase.from('listings').insert({
+      const { error: insertError } = await supabase.from('product_listings').insert({
         title: form.title,
         price: parseFloat(form.price),
         description: form.description,
