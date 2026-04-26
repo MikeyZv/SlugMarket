@@ -9,7 +9,7 @@ const links = [
   { href: "/products/create", label: "Sell" },
   { href: "/messages", label: "Messages" },
   { href: "/a67", label: "Profile" }, // replace later with real username
-  { href: "/signin", label: "Signin" },
+  { href: "/signin", label: "Sign In" },
 ];
 
 export default function Navbar() {

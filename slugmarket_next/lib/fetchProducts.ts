@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 
 export async function fetchProducts() {
   const { data, error } = await supabase
-    .from("product_listings")
+    .from("listings")
     .select("*");
 
   if (error) {

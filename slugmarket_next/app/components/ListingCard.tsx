@@ -1,3 +1,4 @@
+import Image from "next/image";
 export const mockListings = [
   {
     id: 1,
@@ -22,19 +23,30 @@ export const mockListings = [
   },
 ];
 
-
 type Listing = {
   id: number;
   title: string;
   price: number;
   description?: string;
   condition?: string;
+  image_url?: string | null;
 };
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   return (
     <div className="rounded-xl border p-4 shadow-sm min-w-[250px]">
-      <div className="mb-3 flex h-40 items-center justify-center rounded-lg bg-gray-100">
+      <div className="mb-3 flex h-40 items-center justify-center rounded-lg bg-gray-100 overflow-hidden relative">
+        {listing.image_url ? (
+          <Image
+            src={listing.image_url}
+            alt={listing.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover rounded-lg"
+          />
+        ) : (
+          <span className="text-gray-400 text-sm">No image</span>
+        )}
       </div>
 
       <h2 className="text-lg font-semibold">{listing.title}</h2>
