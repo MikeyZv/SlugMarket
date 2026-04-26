@@ -2,7 +2,7 @@ import ListingCard from "../components/ListingCard"
 import { fetchProducts } from "@/lib/fetchProducts";
 
 export default async function HomePage() {
-  const products = await fetchProducts();
+  const products = await fetchProducts("product_listings");
   return (
     <>
       <main className="max-w-5xl mx-auto px-6 py-16 text-center">
