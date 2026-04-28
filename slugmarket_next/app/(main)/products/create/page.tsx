@@ -1,6 +1,6 @@
 "use client" // Required for useState, useRef, and event handlers
 
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -9,13 +9,17 @@ const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
 // Derive the union type from the array so it stays in sync automatically
 type Condition = typeof CONDITIONS[number]
 
+type SelectedImage = {
+  file: File;
+  url: string;
+};
+
 // Shape of the form
 interface ListingForm {
   title: string
   price: string
   description: string
   condition: Condition | ''
-  image: File | null
 }
 
 export default function CreateListingPage() {
@@ -27,17 +31,18 @@ export default function CreateListingPage() {
     price: '',
     description: '',
     condition: '',
-    image: null,
   })
 
   // Object URL for the selected image, used to show a local preview before upload
-  const [preview, setPreview] = useState<string | null>(null)
+  //const [preview, setPreview] = useState<string[] | null>(null)
   // Prevents double-submission and disables the submit button while the request is in flight
   const [loading, setLoading] = useState(false)
   // Holds any error message surfaced to the user
   const [error, setError] = useState<string | null>(null)
   // Ref to the hidden <input type="file"> so the styled drop-zone div can trigger it
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [images, setImages] = useState<SelectedImage[]>([])
 
   // Generic change handler shared by text inputs, textarea, and select.
   // Uses the element's `name` attribute as the form key, so no per-field handler is needed.
@@ -50,37 +55,75 @@ export default function CreateListingPage() {
   // Stores the selected File object in form state and generates a temporary
   // object URL so the image can be previewed locally without uploading first.
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    const next = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+
+    setImages((prev) => [...prev, ...next]);
+
+    // important: reset so selecting the same file again triggers onChange
+    e.target.value = "";
+  }
+  /*
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
-    setForm((prev) => ({ ...prev, image: file }))
+    setForm((prev) => ({ ...prev, images: file }))
     if (file) {
       setPreview(URL.createObjectURL(file))
     } else {
       setPreview(null)
     }
+  }*/
+
+  function removeImage(index: number) {
+    setImages((prev) => {
+      const removed = prev[index];
+      if (removed) URL.revokeObjectURL(removed.url) // avoid mem leaks
+
+      const copy = prev.slice();
+      copy.splice(index, 1);
+
+      return copy;
+    });
   }
 
   // Handles form submission: uploads the image (if any), then inserts the listing row.
   async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault()
+
+    if (images.length === 0) {
+      setError("Please add at least one photo")
+      return
+    }
+    
     setLoading(true)
     setError(null)
 
     try {
       // Upload image to Supabase Storage if the user selected one
-      let image_url: string | null = null
-      if (form.image) {
-        // Use a timestamp-based filename to avoid collisions in the bucket
-        const ext = form.image.name.split('.').pop()
-        const fileName = `${Date.now()}.${ext}`
-        const { error: uploadError } = await supabase.storage
-          .from('listing-images')
-          .upload(fileName, form.image)
-        if (uploadError) throw new Error(uploadError.message)
-        // Retrieve the publicly accessible URL for the uploaded file
-        const { data: { publicUrl } } = supabase.storage
-          .from('listing-images')
-          .getPublicUrl(fileName)
-        image_url = publicUrl
+      let image_urls: string[] = []
+      const files = images.map((x) => x.file)
+
+      if (files.length > 0) {
+        const uploads = await Promise.all(
+          files.map(async (file) => {
+            const ext = file.name.split('.').pop()
+            const fileName = `${Date.now()}-${crypto.randomUUID()}.${ext}`
+            const { error: uploadError } = await supabase.storage
+              .from("listing-images")
+              .upload(fileName, file);
+            if (uploadError) throw new Error(uploadError.message)
+            const { data: { publicUrl } } = supabase.storage.from("listing-images").getPublicUrl(fileName)
+
+            return publicUrl
+          })
+        )
+
+        image_urls = uploads
       }
 
       // Insert the listing record; price is stored as a float, not a string
@@ -89,7 +132,7 @@ export default function CreateListingPage() {
         price: parseFloat(form.price),
         description: form.description,
         condition: form.condition,
-        image_url,
+        image_urls,
       })
       if (insertError) throw new Error(insertError.message)
 
@@ -189,49 +232,39 @@ export default function CreateListingPage() {
         </div>
 
         {/* Image Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Photo
-          </label>
-          <div
+        <div className="grid grid-cols-3 gap-3">
+          {images.length > 0 &&
+            images.map((img, i) => (
+              <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                <img src={img.url} alt={`Photo ${i+1}`} className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(i)}
+                  className="absolute right-2 top-2 h-7 w-7 rounded-full bg-white/90 shadow grid place-items-center"
+                >
+                  x
+                </button>
+              </div>
+            ))
+          }
+
+          {images.length < 9 && <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-400 transition-colors"
+            className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-10 text-center hover:border-yellow-400 transition-colors place-items-center"
           >
-            {preview ? (
-              <img
-                src={preview}
-                alt="Preview"
-                className="max-h-48 mx-auto rounded-lg object-contain"
-              />
-            ) : (
-              <>
-                <p className="text-gray-400 text-sm">Click to upload a photo</p>
-                <p className="text-gray-300 text-xs mt-1">PNG, JPG, WEBP up to 10 MB</p>
-              </>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-            />
-          </div>
-          {preview && (
-            /* Clears the preview, removes the file from state, and resets the
-                 file input value so the same file can be re-selected if needed */
-            <button
-              type="button"
-              onClick={() => {
-                setPreview(null)
-                setForm((prev) => ({ ...prev, image: null }))
-                if (fileInputRef.current) fileInputRef.current.value = ''
-              }}
-              className="mt-2 text-xs text-red-500 hover:text-red-700"
-            >
-              Remove photo
-            </button>
-          )}
+            <span className="text-gray-400 text-sm">Add photo</span>
+            <p className="text-gray-300 text-xs mt-1">PNG, JPG, WEBP up to 10 MB</p>
+          </button>}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </div>
 
         {/* Submit */}

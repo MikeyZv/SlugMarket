@@ -6,6 +6,7 @@ export const mockListings = [
     price: 15,
     description: "Small LED desk lamp in good condition.",
     condition: "Good",
+    image_urls: [],
   },
   {
     id: 2,
@@ -13,6 +14,7 @@ export const mockListings = [
     price: 80,
     description: "Works well and is perfect for a dorm room.",
     condition: "Used",
+    image_urls: [],
   },
   {
     id: 3,
@@ -20,6 +22,7 @@ export const mockListings = [
     price: 25,
     description: "Some highlighting, but still in solid condition.",
     condition: "Fair",
+    image_urls: [],
   },
 ];
 
@@ -27,27 +30,25 @@ type Listing = {
   id: number;
   title: string;
   price: number;
-  description?: string;
-  condition?: string;
-  image_url?: string | null;
+  description: string;
+  condition: string;
+  image_urls: string[];
 };
 
 export default function ListingCard({ listing, priority }: { listing: Listing; priority?: boolean }) {
   return (
     <div className="rounded-xl border p-4 shadow-sm min-w-[250px]">
       <div className="mb-3 flex h-40 items-center justify-center rounded-lg bg-gray-100 overflow-hidden relative">
-        {listing.image_url ? (
+        
           <Image
-            src={listing.image_url}
+            src={listing.image_urls[0]}
             alt={listing.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover rounded-lg"
             priority={priority}
           />
-        ) : (
-          <span className="text-gray-400 text-sm">No image</span>
-        )}
+        
       </div>
 
       <h2 className="text-lg font-semibold">{listing.title}</h2>
