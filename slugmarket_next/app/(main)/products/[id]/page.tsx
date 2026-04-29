@@ -23,54 +23,59 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <ProductImageGallery images={product.image_urls} title={product.title}/>
     
             {/* Right info side */}
-            <section>
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">
-                    {product.title}
-                </h1>
-    
-                <p className="text-2xl font-semibold text-gray-900 mb-4">
-                    ${product.price}
-                </p>
-    
-                <div className="text-gray-600 mb-6">
-                    <p>Condition: {product.condition}</p>
-                </div>
-    
-                <div className="flex flex-col gap-3 mb-8">
-                    <button className="w-full border border-black py-3 rounded-md font-semibold hover:bg-gray-100">
-                        Message Seller
-                    </button>
-        
-                    <div className="grid grid-cols-3 gap-3">
-                        <button className="border border-black py-3 rounded-md font-semibold hover:bg-gray-100">
-                            Bookmark
-                        </button>
-
-                        <button className="border border-black py-3 rounded-md font-semibold hover:bg-gray-100">
-                            Share
-                        </button>
-
-                        <button className="border border-black py-3 rounded-md font-semibold hover:bg-gray-100">
-                            Report
-                        </button>
-                    </div>
-                </div>
-    
-                <hr className="my-6" />
-    
+            <section className="flex flex-col gap-6">
                 <div>
-                    <h2 className="text-lg font-semibold mb-2">Details</h2>
-                    <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                        {product.description}
+                    <h1 className="text-5xl font-bold leading-tight text-gray-900 mb-2">
+                    {product.title}
+                    </h1>
+
+                    <p className="text-2xl font-normal text-gray-900 mb-4">
+                        ${Number(product.price).toLocaleString()}
+                    </p>
+
+                    <p className="text-gray-500 text-lg">
+                        Listed Apr 26 in Santa Cruz, CA
                     </p>
                 </div>
-    
-                <hr className="my-6" />
-    
-                <div className="text-sm text-gray-600 space-y-2">
-                    <p>Listed by UCSC student</p>
-                </div>
-                </section>
+
+            <div>
+                <span className="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
+                    {product.condition}
+                </span>
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <button className="w-full rounded-xl bg-[#3567F1] py-4 text-2xl font-semibold text-white shadow-sm transition hover:bg-[#2f5de0]">
+                    Message
+                </button>
+
+            <div className="grid grid-cols-2 gap-4">
+                <button className="rounded-xl border-2 border-black bg-white py-2 text-xl font-semibold text-black transition hover:bg-gray-50">
+                    Share
+                </button>
+
+                <button className="rounded-xl border-2 border-black bg-white py-2 text-xl font-semibold text-black transition hover:bg-gray-50">
+                    Report
+                </button>
+            </div>
+    </div>
+
+    <hr className="border-gray-300" />
+
+        <div>
+            <h2 className="mb-3 text-2xl font-semibold text-gray-900">Description</h2>
+                <p className="text-[18px] leading-8 text-gray-700 whitespace-pre-line">
+                    {product.description}
+                </p>
+        </div>
+
+    <hr className="border-gray-300" />
+
+        <div className="text-base text-gray-600 space-y-2">
+            <p>Listed by a verified UCSC student</p>
+            <p>Local pickup available in Santa Cruz, CA</p>
+        </div>
+        </section>
             </div>
         </main>
     )
