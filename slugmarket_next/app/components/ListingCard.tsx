@@ -52,11 +52,7 @@ export default function ListingCard({ listing, priority }: { listing: Listing; p
       </div>
 
       <h2 className="text-lg font-semibold">{listing.title}</h2>
-      <p className="text-sm text-gray-500">{listing.condition ?? "Used"}</p>
       <p className="mt-2 font-bold">${listing.price}</p>
-      {listing.description && (
-        <p className="mt-2 text-sm text-gray-700">{listing.description}</p>
-      )}
     </div>
   );
 }
