@@ -1,8 +1,9 @@
 "use client" // Required for useState, useRef, and event handlers
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "../../../components/AuthProvider"
 
 // Fixed list of allowed condition values for a listing
 const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
@@ -23,7 +24,18 @@ interface ListingForm {
 }
 
 export default function CreateListingPage() {
+  const { user, loading } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/signin")
+    }
+  }, [loading, user, router])
+
+  if (loading) return null
+  if (!user) return null
+
 
   // All form field values tracked as a single state object
   const [form, setForm] = useState<ListingForm>({
@@ -36,7 +48,7 @@ export default function CreateListingPage() {
   // Object URL for the selected image, used to show a local preview before upload
   //const [preview, setPreview] = useState<string[] | null>(null)
   // Prevents double-submission and disables the submit button while the request is in flight
-  const [loading, setLoading] = useState(false)
+  const [loadingSubmit, setLoadingSubmit] = useState(false)
   // Holds any error message surfaced to the user
   const [error, setError] = useState<string | null>(null)
   // Ref to the hidden <input type="file"> so the styled drop-zone div can trigger it
@@ -68,16 +80,6 @@ export default function CreateListingPage() {
     // important: reset so selecting the same file again triggers onChange
     e.target.value = "";
   }
-  /*
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null
-    setForm((prev) => ({ ...prev, images: file }))
-    if (file) {
-      setPreview(URL.createObjectURL(file))
-    } else {
-      setPreview(null)
-    }
-  }*/
 
   function removeImage(index: number) {
     setImages((prev) => {
@@ -93,6 +95,11 @@ export default function CreateListingPage() {
 
   // Handles form submission: uploads the image (if any), then inserts the listing row.
   async function handleSubmit(e: React.SubmitEvent) {
+    if (!user) {
+      router.replace("/signin");
+      return;
+    }
+    
     e.preventDefault()
 
     if (images.length === 0) {
@@ -100,7 +107,7 @@ export default function CreateListingPage() {
       return
     }
     
-    setLoading(true)
+    setLoadingSubmit(true)
     setError(null)
 
     try {
@@ -133,6 +140,7 @@ export default function CreateListingPage() {
         description: form.description,
         condition: form.condition,
         image_urls,
+        seller_id: user.id,
       })
       if (insertError) throw new Error(insertError.message)
 
@@ -145,7 +153,7 @@ export default function CreateListingPage() {
       setError(message)
     } finally {
       // Always re-enable the submit button regardless of success or failure
-      setLoading(false)
+      setLoadingSubmit(false)
     }
   }
 
@@ -271,10 +279,10 @@ export default function CreateListingPage() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loadingSubmit}
           className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base"
         >
-          {loading ? 'Posting…' : 'Post Listing'}
+          {loadingSubmit ? 'Posting…' : 'Post Listing'}
         </button>
       </form>
     </main>
