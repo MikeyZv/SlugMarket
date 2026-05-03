@@ -1,4 +1,3 @@
-import Link from "next/link";
 import ListingCard from "../components/ListingCard"
 import { fetchProducts } from "@/lib/fetchProducts";
 
@@ -17,9 +16,7 @@ export default async function HomePage() {
         {/* grid-cols-1 (Mobile), sm (Small Devices), lg (Computers/Laptops) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 auto-rows-fr">
           {(products ?? []).map((listing, index) => (
-            <Link key={listing.id} href={`/products/${listing.id}`} className="block">
-              <ListingCard key={listing.id} listing={listing} priority={index === 0} />
-            </Link>
+            <ListingCard key={listing.id} listing={listing} priority={index === 0} />
           ))} 
         </div>
       </main>

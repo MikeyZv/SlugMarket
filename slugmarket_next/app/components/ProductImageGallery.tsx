@@ -25,36 +25,12 @@ export default function ProductImageGallery({ images, title }: ProductImageGalle
 
   return (
     <div className="w-full">
-<<<<<<< HEAD
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100">
-        <img
-          src={currentImage}
-          alt={title}
-          className="h-full w-full object-cover"
-        />
-
-        {/* Heart & Bookmark Buttons */}
-        <div className="absolute right-4 top-4 flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={() => setIsHeartActive(!isHeartActive)}
-            className="rounded-full bg-white/90 p-3 shadow-md backdrop-blur-sm transition hover:scale-105"
-            aria-label="Toggle favorite"
-          >
-            <Heart
-              className={`h-6 w-6 transition ${
-                isHeartActive ? "fill-red-500 text-red-500" : "text-gray-700"
-              }`}
-            />
-          </button>
-=======
       <div className="relative overflow-hidden rounded-lg bg-gray-100">
         <img
           src={currentImage}
           alt={title}
           className="aspect-square w-full object-cover"
         />
->>>>>>> 2575beff2d62989ae2e22b04e29b1f0f3d87e1bb
 
         {/* Bookmark Button */}
         <div className="absolute right-4 top-4 flex flex-col gap-3">
@@ -64,25 +40,13 @@ export default function ProductImageGallery({ images, title }: ProductImageGalle
             className="rounded-full bg-white/90 p-3 shadow-md backdrop-blur-sm transition hover:scale-105"
             aria-label="Toggle bookmark"
           >
-<<<<<<< HEAD
-            <Bookmark
-              className={`h-6 w-6 transition ${
-                isBookmarkActive ? "fill-red-500 text-red-500" : "text-gray-700"
-              }`}
-            />
-=======
                         
             <Bookmark className={`h-6 w-6 transition ${isBookmarkActive ? "fill-red-500 text-red-500" : "text-gray-700"}`} />
->>>>>>> 2575beff2d62989ae2e22b04e29b1f0f3d87e1bb
           </button>
 
         </div>
 
-<<<<<<< HEAD
-        {/* Prev / Next buttons */}
-=======
         {/* prev and next buttons */}
->>>>>>> 2575beff2d62989ae2e22b04e29b1f0f3d87e1bb
         {images.length > 1 && (
           <>
             <button

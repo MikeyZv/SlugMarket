@@ -1,4 +1,5 @@
 import { fetchProductById } from "@/lib/fetchProducts";
+import { supabase } from "@/lib/supabase";
 import ProductImageGallery from "../../../components/ProductImageGallery"
 
 type ProductPageProps = {
@@ -8,9 +9,20 @@ type ProductPageProps = {
 };
 
 export default async function ProductPage({ params }: ProductPageProps) {
-    const sellerUsername = "a67"
     const { id } = await params;
     const product = await fetchProductById(id);
+
+    if (!product) {
+        return <p>Product not found</p>
+    }
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", product.seller_id)
+        .single();
+
+    const sellerUsername = profile?.username ?? "unknown";
 
     if (!product) {
         return <p>Product not found</p>

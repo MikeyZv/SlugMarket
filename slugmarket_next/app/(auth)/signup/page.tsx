@@ -25,13 +25,15 @@ export default function SignUpPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { username }, // stored in user metadata
+        data: { username }, // stored in user metadata; trigger copies to profiles table
       },
     });
+
+    console.log("signUp result:", { data, error });
 
     setLoading(false);
 

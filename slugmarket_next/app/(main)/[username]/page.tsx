@@ -1,4 +1,6 @@
-import ListingCard, { mockListings } from "../../components/ListingCard";
+import { supabase } from "@/lib/supabase";
+import { fetchProductsBySellerId, fetchSoldListingsBySellerId } from "@/lib/fetchProducts";
+import ProfileTabs from "../../components/ProfileTabs";
 
 // The username is pulled from the URL segment, e.g. /johndoe -> params.username = "johndoe"
 export default async function ProfilePage({
@@ -7,6 +9,21 @@ export default async function ProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
+
+  // Look up the user's ID from the profiles table
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", username)
+    .single();
+
+  // Fetch active and sold listings if the profile exists
+  const [listings, soldListings] = profile
+    ? await Promise.all([
+        fetchProductsBySellerId(profile.id),
+        fetchSoldListingsBySellerId(profile.id),
+      ])
+    : [[], []];
 
   return (
     <main className="max-w-4xl mx-auto px-6 py-12">
@@ -22,16 +39,10 @@ export default async function ProfilePage({
         </div>
       </div>
 
-      {/* Listings section */}
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Listings</h2>
-      {mockListings.length === 0 ? (
-        <p className="text-gray-400 italic">No listings yet.</p>
+      {!profile ? (
+        <p className="text-gray-400 italic">User not found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {mockListings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+        <ProfileTabs listings={listings ?? []} soldListings={soldListings ?? []} />
       )}
     </main>
   );
