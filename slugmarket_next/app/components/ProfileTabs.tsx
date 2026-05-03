@@ -83,7 +83,7 @@ export default function ProfileTabs({ listings, soldListings }: Props) {
           ))}
         </div>
       )}
-      </div>
+      
     </div>
   );
 }

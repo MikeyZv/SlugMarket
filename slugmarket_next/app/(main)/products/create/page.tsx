@@ -33,10 +33,6 @@ export default function CreateListingPage() {
     }
   }, [loading, user, router])
 
-  if (loading) return null
-  if (!user) return null
-
-
   // All form field values tracked as a single state object
   const [form, setForm] = useState<ListingForm>({
     title: '',
@@ -155,6 +151,10 @@ export default function CreateListingPage() {
       // Always re-enable the submit button regardless of success or failure
       setLoadingSubmit(false)
     }
+  }
+
+  if (loading || !user) {
+    return null
   }
 
   return (

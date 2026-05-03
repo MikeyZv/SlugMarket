@@ -33,7 +33,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <main className="max-w-6xl mx-auto px-6 py-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             {/* Left image side */}
-            <ProductImageGallery images={product.image_urls} title={product.title}/>
+            <ProductImageGallery images={product.image_urls} title={product.title} product_id={product.id}/>
+    
             {/* Right info side */}
             <section className="flex flex-col gap-6">
                 <div>
