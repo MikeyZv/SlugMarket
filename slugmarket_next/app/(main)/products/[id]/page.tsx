@@ -22,7 +22,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             {/* Left image side */}
             <ProductImageGallery images={product.image_urls} title={product.title}/>
-    
             {/* Right info side */}
             <section className="flex flex-col gap-6">
                 <div>
@@ -72,12 +71,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     <hr className="border-gray-300" />
 
-<<<<<<< HEAD
-        <div className="text-base text-gray-600 space-y-2">
-            <p>Listed by a verified UCSC student</p>
-            <p>Local pickup available in Santa Cruz, CA</p>
-        </div>
-=======
     <div className="flex items-center gap-3">
         <a href={`/${sellerUsername}`} className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-gray-200" />
@@ -86,7 +79,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     </div>
 
     <p className="text-base text-gray-600">Local pickup available in Santa Cruz, CA</p>
->>>>>>> 170635b4cf3ef50bb9ebe6c37c1fbf0fa2d2c4de
         </section>
             </div>
         </main>
