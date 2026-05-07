@@ -26,7 +26,7 @@ export default function ProfileTabs({ listings, soldListings }: Props) {
       <div className="flex border-b border-gray-200 mb-6">
         <button
           onClick={() => setActiveTab("active")}
-          className={`px-6 py-2 text-sm font-medium transition-colors ${
+          className={`px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
             activeTab === "active"
               ? "border-b-2 border-gray-900 text-gray-900"
               : "text-gray-400 hover:text-gray-600"
@@ -41,7 +41,7 @@ export default function ProfileTabs({ listings, soldListings }: Props) {
         </button>
         <button
           onClick={() => setActiveTab("sold")}
-          className={`px-6 py-2 text-sm font-medium transition-colors ${
+          className={`px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
             activeTab === "sold"
               ? "border-b-2 border-gray-900 text-gray-900"
               : "text-gray-400 hover:text-gray-600"
@@ -68,7 +68,7 @@ export default function ProfileTabs({ listings, soldListings }: Props) {
           </div>
         )
       ) : soldListings.length === 0 ? (
-        <p className="text-gray-400 italic">No sold listings.</p>
+          <p className="text-gray-400 italic">No sold listings.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {soldListings.map((listing) => (
@@ -83,7 +83,6 @@ export default function ProfileTabs({ listings, soldListings }: Props) {
           ))}
         </div>
       )}
-      
     </div>
   );
 }

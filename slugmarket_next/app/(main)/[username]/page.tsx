@@ -26,7 +26,7 @@ export default async function ProfilePage({
     : [[], []];
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
+    <main className="w-full max-w-4xl mx-auto px-6 py-12">
       {/* Profile header */}
       <div className="flex items-center gap-6 mb-10">
         {/* Avatar placeholder */}

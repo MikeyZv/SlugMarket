@@ -1,19 +1,9 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/lib/supabase"
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/search", label: "Search" },
-  { href: "/products/create", label: "Sell" },
-  { href: "/messages", label: "Messages" },
-  { href: "/a67", label: "Profile" }, // replace later with real username
-  { href: "/signin", label: "Sign In" },
-];
 
 const baseLinks = [
   { href: "/", label: "Home" },
@@ -57,7 +47,7 @@ export default function Navbar() {
   const signedInLinks = [
     { href: "/products/create", label: "Sell" },
     { href: "/messages", label: "Messages" },
-    { href: `/${username}`, label: "Profile" }, // replace later with real username
+    { href: `/${username}`, label: "Profile" },
   ];
 
   const navLinks = user
