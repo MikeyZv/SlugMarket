@@ -3,11 +3,20 @@
 import { useState } from "react";
 import ListingCard from "./ListingCard";
 
-export default function FilterForm({ initialProducts }) {
-  const [filters, setFilters] = useState({});
-  const [products, setProducts] = useState(initialProducts);
+type Listing = {
+  id: string;
+  title: string;
+  price: number;
+  description: string;
+  condition: string;
+  image_urls: string[];
+};
 
-  const handleFilter = async (e) => {
+export default function FilterForm({ initialProducts }: { initialProducts: Listing[] }) {
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [products, setProducts] = useState<Listing[]>(initialProducts);
+
+  const handleFilter = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const res = await fetch("/api/products", {
