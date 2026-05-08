@@ -58,3 +58,33 @@ export async function fetchSoldListingsBySellerId(sellerId: string) {
 
   return data;
 }
+
+export async function fetchBookmarkedProducts(userId: string) {
+  const { data: bookmarks, error: bookmarkError } = await supabase
+    .from("bookmarks")
+    .select("product_id")
+    .eq("user_id", userId);
+
+  if (bookmarkError) {
+    console.error("Supabase bookmark error:", bookmarkError);
+    throw new Error(bookmarkError.message);
+  }
+
+  const productIds = bookmarks?.map((bookmark) => bookmark.product_id) ?? [];
+
+  if (productIds.length === 0) {
+    return [];
+  }
+
+  const { data: products, error: productError } = await supabase
+    .from("product_listings")
+    .select("*")
+    .in("id", productIds);
+
+  if (productError) {
+    console.error("Supabase product error:", productError);
+    throw new Error(productError.message);
+  }
+
+  return products ?? [];
+}
