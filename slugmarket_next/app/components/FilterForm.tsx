@@ -7,11 +7,17 @@ export default function FilterForm({ initialProducts }) {
   const [filters, setFilters] = useState({});
   const [products, setProducts] = useState(initialProducts);
 
-  const handleFilter = (e) => {
+  const handleFilter = async (e) => {
     e.preventDefault();
-    console.log("Filters:", filters);
 
-    // Later: call API route or Supabase query
+    const res = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filters),
+    });
+
+    const data = await res.json();
+    setProducts(data.products);
   };
 
   return (
