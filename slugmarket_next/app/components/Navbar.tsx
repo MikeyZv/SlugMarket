@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/lib/supabase";
+import NavSearchBar from "./NavSearchBar";
 import {
   House,
   Search,
@@ -73,6 +74,8 @@ export default function Navbar() {
         <div className="text-gray-700">
           {user ? "Signed in" : "Not signed in"}
         </div>
+
+        <NavSearchBar />
 
         <div className="flex items-center gap-8">
           {navLinks.map((link) => {

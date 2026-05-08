@@ -88,3 +88,22 @@ export async function fetchBookmarkedProducts(userId: string) {
 
   return products ?? [];
 }
+
+export async function fetchProductByQuery(query: string) {
+  const q = query.trim()
+  if (!q) return []
+
+  const { data, error } = await supabase
+    .from("product_listings")
+    .select("*")
+    .eq("sold", false)
+    .or(`title.ilike.%${q}%,description.ilike.%${q}%`)
+    .order("created_at", { ascending: false})
+
+    if (error) {
+      console.error("Supabase error:", error)
+      throw new Error(error.message)
+    }
+
+    return data ?? []
+}

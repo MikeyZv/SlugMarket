@@ -1,0 +1,51 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
+
+export default function NavSearchBar() {
+    const router = useRouter()
+    const pathname = usePathname()
+    const [q, setQ] = useState("")
+
+    // clear searchbar when going to different page
+    useEffect(() => {
+        setQ("")
+    }, [pathname])
+
+    function onSubmit(e: React.FormEvent) {
+        e.preventDefault()
+        const query = q.trim()
+        if (!query) {
+            setQ("")
+            return
+        }
+
+        router.push(`/search?q=${encodeURIComponent(query)}`)
+        setQ("") // clear searchbar after submitting    
+    }
+
+    return (
+        <form onSubmit={onSubmit} className="flex items-center">
+            <div className="relative w-64">
+                <input
+                    type="search"
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder="Search listings…"
+                    className="w-full border border-gray-300 rounded-lg pl-3 pr-12 py-2"
+                />
+                {q.trim().length > 0 && (
+                <button
+                    type="submit"
+                    aria-label="Submit search"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-600 hover:text-gray-900"
+                >
+                    <ArrowRight />
+                </button>
+                )}
+            </div>
+        </form>
+      );
+}
