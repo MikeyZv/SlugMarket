@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import ListingCard from "@/app/components/ListingCard";
 import { fetchBookmarkedProducts } from "@/lib/fetchProducts";
@@ -64,9 +63,7 @@ export default function BookmarksPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((listing, index) => (
-            <Link key={listing.id} href={`/products/${listing.id}`} className="block">
-              <ListingCard listing={listing} priority={index === 0} />
-            </Link>
+            <ListingCard key={listing.id} listing={listing} priority={index === 0} />
           ))}
         </div>
       )}
