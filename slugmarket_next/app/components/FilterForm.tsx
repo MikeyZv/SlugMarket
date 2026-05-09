@@ -51,6 +51,21 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
           <option value="other">Other</option>
         </select>
 
+        <select
+          value={filters.condition || ""}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, condition: e.target.value }))
+          }
+          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-48"
+        >
+          <option value="">Any Conditions</option>
+          <option value="New">New</option>
+          <option value="Like New">Like New</option>
+          <option value="Good">Good</option>
+          <option value="Fair">Fair</option>
+          <option value="Poor">Poor</option>
+        </select>
+
         <input
           type="number"
           placeholder="Min Price"

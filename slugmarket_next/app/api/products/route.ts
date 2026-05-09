@@ -7,11 +7,12 @@ export async function POST(req: Request) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  const { category, minPrice, maxPrice } = await req.json();
+  const { category, minPrice, maxPrice, condition} = await req.json();
 
   let query = supabase.from("product_listings").select("*");
 
   if (category) query = query.eq("category", category);
+  if (condition) query = query.eq("condition", condition)
   if (minPrice) query = query.gte("price", Number(minPrice));
   if (maxPrice) query = query.lte("price", Number(maxPrice));
 
