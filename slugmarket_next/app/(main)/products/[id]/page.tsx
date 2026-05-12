@@ -24,10 +24,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     const sellerUsername = profile?.username ?? "unknown";
 
-    if (!product) {
-        return <p>Product not found</p>
-    }
-
     return (
         
         <main className="max-w-6xl mx-auto px-6 py-10">

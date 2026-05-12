@@ -2,15 +2,7 @@
 
 import { useState } from "react";
 import ListingCard from "./ListingCard";
-
-type Listing = {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  condition: string;
-  image_urls: string[];
-};
+import { Listing } from "@/lib/types";
 
 export default function FilterForm({ initialProducts }: { initialProducts: Listing[] }) {
   const [filters, setFilters] = useState<Record<string, string>>({});

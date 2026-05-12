@@ -2,8 +2,8 @@
 import { supabase } from "./supabase";
 
 // Helper function to fetch all products for home page
-export async function fetchProducts(tableName: string) {
-  const { data, error } = await supabase.from(tableName).select("*");
+export async function fetchProducts() {
+  const { data, error } = await supabase.from("product_listings").select("*");
 
   if (error) {
     console.error("Supabase error:", error);

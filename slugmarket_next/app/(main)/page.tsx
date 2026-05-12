@@ -3,7 +3,7 @@ import { fetchProducts } from "@/lib/fetchProducts";
 import FilterForm from "@/app/components/FilterForm";
 
 export default async function HomePage() {
-  const products = await fetchProducts("product_listings");
+  const products = await fetchProducts();
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-16 text-center">
