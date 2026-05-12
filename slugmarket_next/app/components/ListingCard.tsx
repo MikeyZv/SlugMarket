@@ -1,14 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-
-type Listing = {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  condition: string;
-  image_urls: string[];
-};
+import { Listing } from "@/lib/types";
 
 export default function ListingCard({ listing, priority }: { listing: Listing; priority?: boolean }) {
   return (
