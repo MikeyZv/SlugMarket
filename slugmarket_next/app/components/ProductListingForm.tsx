@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
-import { useAuth } from "./AuthProvider";
-import { FORMERR } from "dns";
+import { useAuth } from "./AuthProvider"
+import { revalidateListings } from "@/app/actions/listings"
 
 // Fixed list of allowed condition values for a listing
 const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
@@ -155,14 +155,15 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
                 image_urls
             }
 
-            if (mode === "create") { // creating new listing
+            if (mode === "create") {
                 const { error: insertError } = await supabase
                     .from("product_listings")
                     .insert({ ...row, seller_id: user.id })
 
                 if (insertError) throw new Error(insertError.message)
-                router.push(`/products/${listingId}`) // redirect to the created listing
-            } else { // updating new listing
+                await revalidateListings()
+                router.push(`/products/${listingId}`)
+            } else {
                 const { error: updateError } = await supabase
                     .from("product_listings")
                     .update(row)
@@ -170,8 +171,9 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
                     .eq("seller_id", user.id)
 
                 if (updateError) throw new Error(updateError.message)
-                router.push(`/products/${listingId}`) // redirect to the updated listing
-            } 
+                await revalidateListings()
+                router.push(`/products/${listingId}`)
+            }
         } catch (err: unknown) {
             // Narrow the unknown error to extract a human-readable message
             const message = err instanceof Error ? err.message : 'Something went wrong.'
