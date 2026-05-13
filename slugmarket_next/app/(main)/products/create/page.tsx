@@ -1,3 +1,10 @@
+import ProductListingForm from "@/app/components/ProductListingForm"
+
+export default function CreateListingPage() {
+  return <ProductListingForm mode="create" />
+}
+
+/*
 "use client" // Required for useState, useRef, and event handlers
 
 import React, { useEffect, useRef, useState } from "react";
@@ -163,7 +170,7 @@ export default function CreateListingPage() {
       <p className="text-gray-500 mb-8">Fill in the details about what you're selling.</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
+        {/* Title *
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
             Title
@@ -180,7 +187,7 @@ export default function CreateListingPage() {
           />
         </div>
 
-        {/* Price */}
+        {/* Price *
         <div>
           <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
             Price
@@ -202,7 +209,7 @@ export default function CreateListingPage() {
           </div>
         </div>
 
-        {/* Description */}
+        {/* Description *
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
             Description
@@ -219,7 +226,7 @@ export default function CreateListingPage() {
           />
         </div>
 
-        {/* Condition */}
+        {/* Condition *
         <div>
           <label htmlFor="condition" className="block text-sm font-medium text-gray-700 mb-1">
             Condition
@@ -239,7 +246,7 @@ export default function CreateListingPage() {
           </select>
         </div>
 
-        {/* Image Upload */}
+        {/* Image Upload *
         <div className="grid grid-cols-3 gap-3">
           {images.length > 0 &&
             images.map((img, i) => (
@@ -275,7 +282,7 @@ export default function CreateListingPage() {
           />
         </div>
 
-        {/* Submit */}
+        {/* Submit *
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
@@ -288,3 +295,4 @@ export default function CreateListingPage() {
     </main>
   )
 }
+*/

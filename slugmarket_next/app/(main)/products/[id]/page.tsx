@@ -2,6 +2,7 @@ import { fetchProductById } from "@/lib/fetchProducts";
 import { supabase } from "@/lib/supabase";
 import ProductImageGallery from "../../../components/ProductImageGallery"
 import DeleteButton from "../../../components/DeleteButton"
+import EditButton from "../../../components/EditButton"
 
 type ProductPageProps = {
     params: Promise<{
@@ -91,6 +92,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <p className="text-base text-gray-600">Local pickup available in Santa Cruz, CA</p>
 
     <DeleteButton productId={product.id} sellerId={product.seller_id} />
+    <EditButton productId={product.id} sellerId={product.seller_id} />
         </section>
             </div>
         </main>
