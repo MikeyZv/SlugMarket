@@ -24,7 +24,7 @@ export default async function ProfilePage({
         fetchSoldListingsBySellerId(profile.id),
       ])
     : [[], []];
-
+ // Render the profile page with the user's listings and sold items
   return (
     <main className="w-full max-w-4xl mx-auto px-6 py-12">
       {/* Profile header */}
