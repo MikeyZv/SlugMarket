@@ -1,38 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "./AuthProvider";
+import { revalidateListings } from "@/app/actions/listings";
 
 type DeleteButtonProps = {
     productId: string;
     sellerId: string;
+    imageUrls: string[];
 };
 
-export default function DeleteButton({ productId, sellerId }: DeleteButtonProps) {
-    const [isOwner, setIsOwner] = useState(false);
+export default function DeleteButton({ productId, sellerId, imageUrls }: DeleteButtonProps) {
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
 
-    useEffect(() => {
-        supabase.auth.getUser().then(({ data }) => {
-            if (data.user?.id === sellerId) {
-                setIsOwner(true);
-            }
-        });
-    }, [sellerId]);
-
-    if (!isOwner) return null;
+    if (user?.id !== sellerId) return null;
 
     async function handleDelete() {
         setLoading(true);
-        const { error } = await supabase.from("products").delete().eq("id", productId);
+
+        // Extract storage paths from public URLs and delete from storage
+        const BUCKET = "listing-images";
+        const marker = `/${BUCKET}/`;
+        const filePaths = imageUrls
+            .map((url) => {
+                const idx = url.indexOf(marker);
+                if (idx === -1) return null;
+                const path = url.slice(idx + marker.length).split("?")[0];
+                return path || null;
+            })
+            .filter((p): p is string => p !== null);
+
+        console.log("[DeleteButton] image paths to remove:", filePaths);
+
+        if (filePaths.length > 0) {
+            const { error: storageError } = await supabase.storage.from(BUCKET).remove(filePaths);
+            if (storageError) console.error("[DeleteButton] storage removal error:", storageError);
+        }
+
+        const { error } = await supabase.from("product_listings").delete().eq("id", productId);
         if (error) {
             setLoading(false);
             setShowModal(false);
             return;
         }
+        await revalidateListings();
         router.push("/");
     }
 

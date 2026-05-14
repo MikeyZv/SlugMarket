@@ -98,13 +98,13 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
         });
     }
 
-    async function uploadLocals(files: File[]) {
+    async function uploadLocals(files: File[], userId: string) {
         if (files.length === 0) return []
 
         const uploads = await Promise.all(
             files.map(async (file) => {
                 const ext = file.name.split('.').pop()
-                const fileName = `${Date.now()}-${crypto.randomUUID()}.${ext}`
+                const fileName = `${userId}/${Date.now()}-${crypto.randomUUID()}.${ext}`
                 const { error: uploadError } = await supabase.storage
                     .from("listing-images")
                     .upload(fileName, file);
@@ -144,7 +144,7 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
             const localFiles = images.filter((img) => img.kind === "local")
                                      .map((img) => img.file)
 
-            const newUrls = await uploadLocals(localFiles)
+            const newUrls = await uploadLocals(localFiles, user.id)
             const image_urls = [...remoteUrls, ...newUrls]
 
             const row = {
@@ -156,13 +156,15 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
             }
 
             if (mode === "create") {
-                const { error: insertError } = await supabase
+                const { data: inserted, error: insertError } = await supabase
                     .from("product_listings")
                     .insert({ ...row, seller_id: user.id })
+                    .select("id")
+                    .single()
 
                 if (insertError) throw new Error(insertError.message)
                 await revalidateListings()
-                router.push(`/products/${listingId}`)
+                router.push(`/products/${inserted.id}`)
             } else {
                 const { error: updateError } = await supabase
                     .from("product_listings")

@@ -14,12 +14,11 @@ export async function fetchProducts() {
 
 // Helper function to fetch a single product by ID fpr product details page
 export async function fetchProductById(id: string) {
-  const { data, error } = await supabase.from("product_listings").select("*").eq("id", id).single();
+  const { data, error } = await supabase.from("product_listings").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("Supabase error:", error);
     throw new Error(error.message);
-    return null;
   }
 
   return data;

@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import ListingCard from "@/app/components/ListingCard";
 import { fetchBookmarkedProducts } from "@/lib/fetchProducts";
 import { useAuth } from "@/app/components/AuthProvider";
+import { Listing } from "@/lib/types";
 
 export default function BookmarksPage() {
   const { user, loading } = useAuth();
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Listing[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {

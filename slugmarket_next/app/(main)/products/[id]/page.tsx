@@ -91,7 +91,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     <p className="text-base text-gray-600">Local pickup available in Santa Cruz, CA</p>
 
-    <DeleteButton productId={product.id} sellerId={product.seller_id} />
+    <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls} />
     <EditButton productId={product.id} sellerId={product.seller_id} />
         </section>
             </div>

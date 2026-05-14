@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Bookmark } from "lucide-react"
+import { Bookmark } from "lucide-react"
 import { useAuth } from "./AuthProvider"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
@@ -16,9 +16,7 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isHeartActive, setIsHeartActive] = useState(false)
   const [isBookmarkActive, setIsBookmarkActive] = useState(false)
-  const [bookmarkLoading, setBookmarkLoading] = useState(true)
 
   const currentImage = images[currentIndex]
 
@@ -28,7 +26,6 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
 
     if (!user) {
       setIsBookmarkActive(false);
-      setBookmarkLoading(false);
       return;
     }
 
@@ -43,11 +40,7 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
         .eq("product_id", product_id)
         .maybeSingle();
 
-      if (!cancelled) {
-        // sets bookmark toggle as true if user already bookmarked before
-        if (!error && data) setIsBookmarkActive(true);
-        setBookmarkLoading(false)
-      }
+      if (!cancelled && !error && data) setIsBookmarkActive(true);
     };
 
     checkBookmarkExists()
@@ -61,6 +54,7 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
     if (authLoading) return;
     if (!user) {
       router.push(`/signin?next=/products/${encodeURIComponent(product_id)}`)
+      return
     }
 
     const nextState = !isBookmarkActive
