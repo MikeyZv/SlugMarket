@@ -1,8 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import { fetchProductsBySellerId, fetchSoldListingsBySellerId } from "@/lib/fetchProducts";
 import ProfileTabs from "../../components/ProfileTabs";
+import AvatarUpload from "../../components/AvatarUpload";
 
-// The username is pulled from the URL segment, e.g. /johndoe -> params.username = "johndoe"
+// This page is rendered server-side to fetch the user's listings before rendering the profile page
 export default async function ProfilePage({
   params,
 }: {
@@ -13,7 +14,7 @@ export default async function ProfilePage({
   // Look up the user's ID from the profiles table
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id")
+    .select("id, avatar_url")
     .eq("username", username)
     .single();
 
@@ -29,10 +30,11 @@ export default async function ProfilePage({
     <main className="w-full max-w-4xl mx-auto px-6 py-12">
       {/* Profile header */}
       <div className="flex items-center gap-6 mb-10">
-        {/* Avatar placeholder */}
-        <div className="w-20 h-20 rounded-full bg-yellow-400 flex items-center justify-center text-3xl font-bold text-white">
-          {username[0].toUpperCase()}
-        </div>
+        <AvatarUpload
+          profileId={profile?.id ?? ""}
+          username={username}
+          avatarUrl={profile?.avatar_url ?? null}
+        />
         <div>
           <h1 className="text-2xl font-bold text-gray-900">@{username}</h1>
           <p className="text-gray-500 text-sm mt-1">UCSC Student</p>

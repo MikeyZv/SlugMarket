@@ -24,10 +24,11 @@ const signedOutLinks = [
   { href: "/signin", label: "Sign In", icon: User },
 ];
 
+// Navbar component that displays navigation links based on the user's authentication state. It also includes a search bar and a sign out button for authenticated users.
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, avatarUrl } = useAuth();
 
   function getLinkClasses(href: string) {
     const isActive =
@@ -71,15 +72,13 @@ export default function Navbar() {
           SlugMarket
         </Link>
 
-        <div className="text-gray-700">
-          {user ? "Signed in" : "Not signed in"}
-        </div>
-
         <NavSearchBar />
 
         <div className="flex items-center gap-8">
           {navLinks.map((link) => {
             const Icon = link.icon;
+
+            const isProfile = link.label === "Profile";
 
             return (
               <Link
@@ -87,8 +86,10 @@ export default function Navbar() {
                 href={link.href}
                 className={`flex flex-col items-center gap-1 text-sm ${getLinkClasses(link.href)}`}
               >
-                <Icon size={22} strokeWidth={2} />
-                <span>{link.label}</span>
+                {isProfile && avatarUrl
+                  ? <img src={avatarUrl} alt="avatar" className="w-11 h-11 rounded-full object-cover" />
+                  : <Icon size={22} strokeWidth={2} />}
+                {!(isProfile && avatarUrl) && <span>{link.label}</span>}
               </Link>
             );
           })}

@@ -20,11 +20,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     const { data: profile } = await supabase
         .from("profiles")
-        .select("username")
+        .select("username, avatar_url")
         .eq("id", product.seller_id)
         .single();
 
     const sellerUsername = profile?.username ?? "unknown";
+    const sellerAvatarUrl = profile?.avatar_url ?? null;
 
     return (
         
@@ -84,7 +85,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     <div className="flex items-center gap-3">
         <a href={`/${sellerUsername}`} className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gray-200" />
+            <div className="h-10 w-10 rounded-full bg-yellow-400 overflow-hidden flex items-center justify-center text-white font-bold shrink-0">
+                {sellerAvatarUrl
+                    ? <img src={sellerAvatarUrl} alt={sellerUsername} className="w-full h-full object-cover" />
+                    : sellerUsername[0]?.toUpperCase()}
+            </div>
             <span className="text-gray-900 font-medium">@{sellerUsername}</span>
         </a>
     </div>

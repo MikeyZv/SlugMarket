@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Listing } from "@/lib/types";
 
+// This component renders a card for a product listing. It displays the product image, title, and price, and links to the product detail page.
 export default function ListingCard({ listing, priority }: { listing: Listing; priority?: boolean }) {
   return (
     <Link href={`/products/${listing.id}`} className="block rounded-xl border p-4 shadow-sm min-w-[250px] hover:shadow-md transition-shadow">

@@ -58,6 +58,7 @@ export async function fetchSoldListingsBySellerId(sellerId: string) {
   return data;
 }
 
+// Helper function to fetch bookmarked products for a user
 export async function fetchBookmarkedProducts(userId: string) {
   const { data: bookmarks, error: bookmarkError } = await supabase
     .from("bookmarks")
@@ -88,6 +89,7 @@ export async function fetchBookmarkedProducts(userId: string) {
   return products ?? [];
 }
 
+// Helper function to fetch products by search query for search results page
 export async function fetchProductByQuery(query: string) {
   const q = query.trim()
   if (!q) return []
