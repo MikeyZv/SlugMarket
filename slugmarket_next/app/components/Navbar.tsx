@@ -66,30 +66,68 @@ export default function Navbar() {
     : [...baseLinks, ...signedOutLinks];
 
   return (
-    <nav className="border-b border-gray-300">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <Link href="/" className="text-2xl font-bold">
-          SlugMarket
-        </Link>
+    <>
+      {/* Top bar */}
+      <nav className="border-b border-gray-300 bg-white">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+          <Link href="/" className="text-2xl font-bold shrink-0">
+            SlugMarket
+          </Link>
 
-        <NavSearchBar />
+          {/* Search bar — hidden below 945px */}
+          <div className="hidden min-[945px]:block w-64">
+            <NavSearchBar />
+          </div>
 
-        <div className="flex items-center gap-8">
-          {navLinks.map((link) => {
+          {/* Desktop nav links — hidden on mobile */}
+          <div className="hidden sm:flex items-center gap-8">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const isProfile = link.label === "Profile";
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex flex-col items-center gap-1 text-sm ${getLinkClasses(link.href)}`}
+                >
+                  {isProfile && avatarUrl
+                    ? <img src={avatarUrl} alt="avatar" className="w-11 h-11 rounded-full object-cover" />
+                    : <Icon size={22} strokeWidth={2} />}
+                  {!(isProfile && avatarUrl) && <span>{link.label}</span>}
+                </Link>
+              );
+            })}
+
+            {user && (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-blue-600"
+              >
+                <LogOut size={22} strokeWidth={2} />
+                <span>Sign Out</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile bottom nav — visible only on small screens */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white">
+        <div className="flex items-center justify-around px-2 py-2">
+          {navLinks.filter((link) => link.label !== "Saved").map((link) => {
             const Icon = link.icon;
-
             const isProfile = link.label === "Profile";
-
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex flex-col items-center gap-1 text-sm ${getLinkClasses(link.href)}`}
+                className={`flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${getLinkClasses(link.href)}`}
               >
                 {isProfile && avatarUrl
-                  ? <img src={avatarUrl} alt="avatar" className="w-11 h-11 rounded-full object-cover" />
-                  : <Icon size={22} strokeWidth={2} />}
-                {!(isProfile && avatarUrl) && <span>{link.label}</span>}
+                  ? <img src={avatarUrl} alt="avatar" className="w-7 h-7 rounded-full object-cover" />
+                  : <Icon size={20} strokeWidth={2} />}
+                <span>{link.label}</span>
               </Link>
             );
           })}
@@ -98,14 +136,14 @@ export default function Navbar() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-blue-600"
+              className="flex flex-col items-center gap-0.5 text-xs px-3 py-1 text-gray-700 hover:text-blue-600"
             >
-              <LogOut size={22} strokeWidth={2} />
+              <LogOut size={20} strokeWidth={2} />
               <span>Sign Out</span>
             </button>
           )}
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

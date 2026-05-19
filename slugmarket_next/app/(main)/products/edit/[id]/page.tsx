@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { fetchProductById } from "@/lib/fetchProducts"
 import ProductListingForm from "@/app/components/ProductListingForm"
 

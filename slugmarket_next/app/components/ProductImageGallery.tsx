@@ -12,6 +12,7 @@ type ProductImageGalleryProps = {
   product_id: string;
 };
 
+// This component renders a product image gallery with next/previous buttons and a bookmark toggle. It also checks if the current user has bookmarked the product and allows toggling the bookmark state.
 export default function ProductImageGallery({ images, title, product_id }: ProductImageGalleryProps) {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
@@ -50,6 +51,7 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
     }
   }, [authLoading, user, product_id])
 
+  // Toggle bookmark state and update database accordingly
   async function toggleBookmark() {
     if (authLoading) return;
     if (!user) {
@@ -80,6 +82,7 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
     }
   }
 
+  // Handlers for next and previous buttons with wrap-around logic
   function goPrevious() {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import ListingCard from "./ListingCard";
 import { Listing } from "@/lib/types";
 
+// This component renders a filter form for the product listings. It allows users to filter by category, condition, and price range.
 export default function FilterForm({ initialProducts }: { initialProducts: Listing[] }) {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [products, setProducts] = useState<Listing[]>(initialProducts);

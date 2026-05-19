@@ -1,7 +1,7 @@
-import ListingCard from "../components/ListingCard"
 import { fetchProducts } from "@/lib/fetchProducts";
 import FilterForm from "@/app/components/FilterForm";
 
+// The HomePage component fetches all products from the database and renders the main landing page of the application. It includes a welcome message and a FilterForm component that allows users to filter products based on various criteria. The initial list of products is passed to the FilterForm as a prop, enabling it to display the products before any filters are applied.
 export default async function HomePage() {
   const products = await fetchProducts();
 

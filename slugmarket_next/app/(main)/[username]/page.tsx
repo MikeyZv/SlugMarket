@@ -44,7 +44,7 @@ export default async function ProfilePage({
       {!profile ? (
         <p className="text-gray-400 italic">User not found.</p>
       ) : (
-        <ProfileTabs listings={listings ?? []} soldListings={soldListings ?? []} />
+        <ProfileTabs listings={listings ?? []} soldListings={soldListings ?? []} profileId={profile.id} />
       )}
     </main>
   );

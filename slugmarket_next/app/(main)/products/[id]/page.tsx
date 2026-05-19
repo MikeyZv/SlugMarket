@@ -35,13 +35,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <ProductImageGallery images={product.image_urls} title={product.title} product_id={product.id}/>
     
             {/* Right info side */}
-            <section className="flex flex-col gap-6">
+            <section className="flex flex-col gap-6 min-w-0">
                 <div>
-                    <h1 className="text-5xl font-bold leading-tight text-gray-900 mb-2">
+                    <h1 className="text-3xl md:text-5xl font-bold leading-tight text-gray-900 mb-2">
                     {product.title}
                     </h1>
 
-                    <p className="text-2xl font-normal text-gray-900 mb-4">
+                    <p className="text-xl md:text-2xl font-normal text-gray-900 mb-4">
                         ${Number(product.price).toLocaleString()}
                     </p>
 
@@ -57,16 +57,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <div className="flex flex-col gap-4">
-                <button className="w-full rounded-xl bg-[#3567F1] py-4 text-2xl font-semibold text-white shadow-sm transition hover:bg-[#2f5de0]">
+                <button className="w-full rounded-xl bg-[#3567F1] py-3 md:py-4 text-lg md:text-2xl font-semibold text-white shadow-sm transition hover:bg-[#2f5de0]">
                     Message
                 </button>
 
             <div className="grid grid-cols-2 gap-4">
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-xl font-semibold text-black transition hover:bg-gray-50">
+                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
                     Share
                 </button>
 
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-xl font-semibold text-black transition hover:bg-gray-50">
+                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
                     Report
                 </button>
             </div>
@@ -75,8 +75,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <hr className="border-gray-300" />
 
         <div>
-            <h2 className="mb-3 text-2xl font-semibold text-gray-900">Description</h2>
-                <p className="text-[18px] leading-8 text-gray-700 whitespace-pre-line">
+            <h2 className="mb-3 text-xl md:text-2xl font-semibold text-gray-900">Description</h2>
+                <p className="text-base md:text-[18px] md:leading-8 leading-7 text-gray-700 whitespace-pre-line break-words">
                     {product.description}
                 </p>
         </div>
