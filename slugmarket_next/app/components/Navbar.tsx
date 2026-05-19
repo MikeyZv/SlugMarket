@@ -80,7 +80,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop nav links — hidden on mobile */}
-          <div className="hidden sm:flex items-center gap-8">
+          <div className="hidden min-[770px]:flex items-center gap-8">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isProfile = link.label === "Profile";
@@ -113,7 +113,7 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile bottom nav — visible only on small screens */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white">
+      <nav className="min-[770px]:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white">
         <div className="flex items-center justify-around px-2 py-2">
           {navLinks.filter((link) => link.label !== "Saved").map((link) => {
             const Icon = link.icon;

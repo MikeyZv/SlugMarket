@@ -35,7 +35,7 @@ export default function RootLayout({
             <Navbar />
           </header>
 
-          <div className="pb-16 sm:pb-0">
+          <div className="pb-16 min-[770px]:pb-0">
             {children}
           </div>
         </AuthProvider>

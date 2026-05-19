@@ -13,7 +13,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <h1 className="text-2xl font-bold text-gray-900">Search</h1>
 
             {/* Search bar visible on mobile only */}
-            <div className="sm:hidden mt-4">
+            <div className="min-[770px]:hidden mt-4">
                 <NavSearchBar />
             </div>
 
@@ -24,7 +24,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             ) : (
                 <p className="text-gray-500 mt-2">Type a search to begin.</p>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 auto-rows-fr">
+            <div className="grid grid-cols-1 min-[770px]:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 auto-rows-fr">
                 {(results ?? []).map((listing, index) => (
                     <ListingCard key={listing.id} listing={listing} priority={index === 0} />
                 ))}

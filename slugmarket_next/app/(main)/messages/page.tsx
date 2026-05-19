@@ -68,7 +68,7 @@ export default function MessagesPage() {
       <div className="flex border border-gray-200 rounded-xl overflow-hidden h-[600px] shadow-sm">
 
         {/* Conversation list — hidden on mobile when a thread is open */}
-        <div className={`${mobileView === "thread" ? "hidden sm:flex" : "flex"} flex-col w-full sm:w-72 border-r border-gray-200 overflow-y-auto flex-shrink-0`}>
+        <div className={`${mobileView === "thread" ? "hidden min-[770px]:flex" : "flex"} flex-col w-full min-[770px]:w-72 border-r border-gray-200 overflow-y-auto flex-shrink-0`}>
           {mockConversations.map((convo) => (
             <button
               key={convo.id}
@@ -99,7 +99,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Message thread — hidden on mobile when list is shown */}
-        <div className={`${mobileView === "list" ? "hidden sm:flex" : "flex"} flex-col flex-1`}>
+        <div className={`${mobileView === "list" ? "hidden min-[770px]:flex" : "flex"} flex-col flex-1`}>
           {selected ? (
             <>
               {/* Header */}
@@ -107,7 +107,7 @@ export default function MessagesPage() {
                 <button
                   type="button"
                   onClick={() => setMobileView("list")}
-                  className="sm:hidden text-blue-600 text-sm font-medium"
+                  className="min-[770px]:hidden text-blue-600 text-sm font-medium"
                 >
                   ← Back
                 </button>

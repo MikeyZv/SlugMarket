@@ -70,7 +70,7 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
         {isOwnProfile && (
           <button
             onClick={handleBookmarksTab}
-            className={`sm:hidden px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
+            className={`min-[770px]:hidden px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
               activeTab === "bookmarks"
                 ? "border-b-2 border-gray-900 text-gray-900"
                 : "text-gray-400 hover:text-gray-600"
@@ -88,7 +88,7 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
         ) : bookmarks.length === 0 ? (
           <p className="text-gray-400 italic">No saved items.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 min-[770px]:grid-cols-2 lg:grid-cols-3 gap-4">
             {bookmarks.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
@@ -98,7 +98,7 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
         listings.length === 0 ? (
           <p className="text-gray-400 italic">No active listings.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 min-[770px]:grid-cols-2 lg:grid-cols-3 gap-4">
             {listings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
@@ -107,7 +107,7 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
       ) : soldListings.length === 0 ? (
           <p className="text-gray-400 italic">No sold listings.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 min-[770px]:grid-cols-2 lg:grid-cols-3 gap-4">
           {soldListings.map((listing) => (
             <div key={listing.id} className="relative opacity-60">
               <ListingCard listing={listing} />
