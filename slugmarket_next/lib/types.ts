@@ -7,5 +7,4 @@ export type Listing = {
   image_urls: string[];
   seller_id: string;
   sold: boolean;
-  pending: boolean;
 };
