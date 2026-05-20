@@ -13,6 +13,7 @@ type ListingManageModalProps = {
     onClose: () => void; // function to close out of modal after leaving profile page
 }
 
+// This component is a modal that allows users to manage their product listings. It provides options to preview the listing, mark it as sold, edit the listing, or delete it. The modal also handles the necessary API calls to update the listing's status in the database and refreshes the page to reflect changes.
 export default function ListingManageModal({ listing, onClose }: ListingManageModalProps) {
     const router = useRouter()
     const [saving, setSaving] = useState(false)
