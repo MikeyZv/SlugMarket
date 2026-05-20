@@ -106,3 +106,22 @@ export async function fetchProductByQuery(query: string) {
 
     return data ?? []
 }
+
+export async function fetchBookmarkCount(listingId: string) {
+  try {
+    console.log(listingId)
+    const { data, error } = await supabase
+      .from("bookmarks")
+      .select("*")
+
+    if (error) {
+      console.error("Error fetching bookmark count:", error);
+      throw new Error("Failed to fetch bookmark count");
+    }
+    console.log(data)
+    return data?.length ?? 0;
+  } catch (err) {
+    console.error("Unexpected error in fetchBookmarkCount:", err);
+    throw err;
+  }
+}
