@@ -5,6 +5,7 @@ import ListingCard from "./ListingCard";
 import { Listing } from "@/lib/types";
 import { useAuth } from "./AuthProvider";
 import { fetchBookmarkedProducts } from "@/lib/fetchProducts";
+import ListingManageModal from "./ListingManageModal"
 
 type Props = {
   listings: Listing[];
@@ -19,6 +20,7 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
   const [bookmarks, setBookmarks] = useState<Listing[]>([]);
   const [bookmarksLoaded, setBookmarksLoaded] = useState(false);
   const [bookmarksLoading, setBookmarksLoading] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null)
 
   async function handleBookmarksTab() {
     setActiveTab("bookmarks");
@@ -100,7 +102,11 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
         ) : (
           <div className="grid grid-cols-1 min-[770px]:grid-cols-2 lg:grid-cols-3 gap-4">
             {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
+              <ListingCard
+                key={listing.id}
+                listing={listing} 
+                onSelectListing={isOwnProfile ? () => setSelectedListing(listing) : undefined}
+              />
             ))}
           </div>
         )
@@ -119,6 +125,10 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
             </div>
           ))}
         </div>
+      )}
+
+      {selectedListing && isOwnProfile && (
+        <ListingManageModal listing={selectedListing} onClose={() => setSelectedListing(null)} />
       )}
     </div>
   );
