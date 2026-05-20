@@ -51,6 +51,12 @@ const mockMessages: Record<number, { from: "me" | "them"; text: string }[]> = {
 export default function MessagesPage() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [input, setInput] = useState("");
+  const [mobileView, setMobileView] = useState<"list" | "thread">("list");
+
+  function handleSelectConvo(id: number) {
+    setSelectedId(id);
+    setMobileView("thread");
+  }
 
   const selected = mockConversations.find((c) => c.id === selectedId);
   const messages = selectedId ? mockMessages[selectedId] ?? [] : [];
@@ -61,12 +67,12 @@ export default function MessagesPage() {
 
       <div className="flex border border-gray-200 rounded-xl overflow-hidden h-[600px] shadow-sm">
 
-        {/* Conversation list */}
-        <div className="w-72 border-r border-gray-200 overflow-y-auto flex-shrink-0">
+        {/* Conversation list — hidden on mobile when a thread is open */}
+        <div className={`${mobileView === "thread" ? "hidden min-[770px]:flex" : "flex"} flex-col w-full min-[770px]:w-72 border-r border-gray-200 overflow-y-auto flex-shrink-0`}>
           {mockConversations.map((convo) => (
             <button
               key={convo.id}
-              onClick={() => setSelectedId(convo.id)}
+              onClick={() => handleSelectConvo(convo.id)}
               className={`w-full text-left px-4 py-4 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${
                 selectedId === convo.id ? "bg-yellow-50 border-l-4 border-l-yellow-400" : ""
               }`}
@@ -92,13 +98,20 @@ export default function MessagesPage() {
           ))}
         </div>
 
-        {/* Message thread */}
-        <div className="flex flex-col flex-1">
+        {/* Message thread — hidden on mobile when list is shown */}
+        <div className={`${mobileView === "list" ? "hidden min-[770px]:flex" : "flex"} flex-col flex-1`}>
           {selected ? (
             <>
               {/* Header */}
-              <div className="px-5 py-4 border-b border-gray-200 font-semibold text-gray-900">
-                @{selected.username}
+              <div className="px-5 py-4 border-b border-gray-200 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMobileView("list")}
+                  className="min-[770px]:hidden text-blue-600 text-sm font-medium"
+                >
+                  ← Back
+                </button>
+                <span className="font-semibold text-gray-900">@{selected.username}</span>
               </div>
 
               {/* Messages */}

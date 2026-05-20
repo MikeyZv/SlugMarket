@@ -4,18 +4,25 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import type { Session, User } from "@supabase/supabase-js"
 import { supabase } from "@/lib/supabase"
 
+// This file provides an AuthProvider component that manages user authentication state using Supabase.
+// It also exports a useAuth hook for easy access to auth state in any component.
+
 type AuthContextValue = {
     user: User | null;
     session: Session | null;
     loading: boolean;
+    avatarUrl: string | null;
+    setAvatarUrl: (url: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+// This provider should wrap the entire app to provide auth state to all components
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const [session, setSession] = useState<Session | null>(null)
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
     useEffect(() => {
         let mounted = true
@@ -36,6 +43,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             setSession(nextSession)
             setUser(nextSession?.user ?? null)
             setLoading(false)
+            if (!nextSession?.user) setAvatarUrl(null)
         })
 
         return () => {
@@ -44,9 +52,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         }
     }, [])
 
+    // Fetch avatar_url from profiles whenever the user changes
+    useEffect(() => {
+        if (!user) return
+        supabase
+            .from("profiles")
+            .select("avatar_url")
+            .eq("id", user.id)
+            .single()
+            .then(({ data }) => setAvatarUrl(data?.avatar_url ?? null))
+    }, [user?.id])
+
     const value = useMemo<AuthContextValue>(
-        () => ({ user, session, loading }
-        ), [user, session, loading]
+        () => ({ user, session, loading, avatarUrl, setAvatarUrl }),
+        [user, session, loading, avatarUrl]
     )
 
     return <AuthContext.Provider value={value}>

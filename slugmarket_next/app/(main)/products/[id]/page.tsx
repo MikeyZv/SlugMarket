@@ -20,11 +20,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     const { data: profile } = await supabase
         .from("profiles")
-        .select("username")
+        .select("username, avatar_url")
         .eq("id", product.seller_id)
         .single();
 
     const sellerUsername = profile?.username ?? "unknown";
+    const sellerAvatarUrl = profile?.avatar_url ?? null;
 
     return (
         
@@ -34,13 +35,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <ProductImageGallery images={product.image_urls} title={product.title} product_id={product.id}/>
     
             {/* Right info side */}
-            <section className="flex flex-col gap-6">
+            <section className="flex flex-col gap-6 min-w-0">
                 <div>
-                    <h1 className="text-5xl font-bold leading-tight text-gray-900 mb-2">
+                    <h1 className="text-3xl md:text-5xl font-bold leading-tight text-gray-900 mb-2">
                     {product.title}
                     </h1>
 
-                    <p className="text-2xl font-normal text-gray-900 mb-4">
+                    <p className="text-xl md:text-2xl font-normal text-gray-900 mb-4">
                         ${Number(product.price).toLocaleString()}
                     </p>
 
@@ -56,16 +57,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <div className="flex flex-col gap-4">
-                <button className="w-full rounded-xl bg-[#3567F1] py-4 text-2xl font-semibold text-white shadow-sm transition hover:bg-[#2f5de0]">
+                <button className="w-full rounded-xl bg-[#3567F1] py-3 md:py-4 text-lg md:text-2xl font-semibold text-white shadow-sm transition hover:bg-[#2f5de0]">
                     Message
                 </button>
 
             <div className="grid grid-cols-2 gap-4">
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-xl font-semibold text-black transition hover:bg-gray-50">
+                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
                     Share
                 </button>
 
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-xl font-semibold text-black transition hover:bg-gray-50">
+                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
                     Report
                 </button>
             </div>
@@ -74,8 +75,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <hr className="border-gray-300" />
 
         <div>
-            <h2 className="mb-3 text-2xl font-semibold text-gray-900">Description</h2>
-                <p className="text-[18px] leading-8 text-gray-700 whitespace-pre-line">
+            <h2 className="mb-3 text-xl md:text-2xl font-semibold text-gray-900">Description</h2>
+                <p className="text-base md:text-[18px] md:leading-8 leading-7 text-gray-700 whitespace-pre-line break-words">
                     {product.description}
                 </p>
         </div>
@@ -84,7 +85,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     <div className="flex items-center gap-3">
         <a href={`/${sellerUsername}`} className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gray-200" />
+            <div className="h-10 w-10 rounded-full bg-yellow-400 overflow-hidden flex items-center justify-center text-white font-bold shrink-0">
+                {sellerAvatarUrl
+                    ? <img src={sellerAvatarUrl} alt={sellerUsername} className="w-full h-full object-cover" />
+                    : sellerUsername[0]?.toUpperCase()}
+            </div>
             <span className="text-gray-900 font-medium">@{sellerUsername}</span>
         </a>
     </div>

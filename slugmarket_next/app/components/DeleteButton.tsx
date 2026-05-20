@@ -12,6 +12,7 @@ type DeleteButtonProps = {
     imageUrls: string[];
 };
 
+// This component renders a delete button for a product listing. It checks if the current user is the seller before rendering.
 export default function DeleteButton({ productId, sellerId, imageUrls }: DeleteButtonProps) {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);

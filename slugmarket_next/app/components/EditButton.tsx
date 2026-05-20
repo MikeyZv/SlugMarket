@@ -9,6 +9,7 @@ type EditButtonProps = {
     sellerId: string;
 }
 
+// This component renders an edit button for a product listing. It checks if the current user is the seller before rendering.
 export default function EditButton({ productId, sellerId }: EditButtonProps) {
     const [isOwner, setIsOwner] = useState(false)
 

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
+// 
 export default function NavSearchBar() {
     const router = useRouter()
     const pathname = usePathname()
@@ -27,8 +28,8 @@ export default function NavSearchBar() {
     }
 
     return (
-        <form onSubmit={onSubmit} className="flex items-center">
-            <div className="relative w-64">
+        <form onSubmit={onSubmit} className="flex items-center w-full">
+            <div className="relative w-full">
                 <input
                     type="search"
                     value={q}

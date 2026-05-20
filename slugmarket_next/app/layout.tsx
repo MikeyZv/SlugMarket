@@ -31,11 +31,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <header className="border-b bg-white">
+          <header>
             <Navbar />
           </header>
-          
-          {children}
+
+          <div className="pb-16 min-[770px]:pb-0">
+            {children}
+          </div>
         </AuthProvider>
       </body>
     </html>

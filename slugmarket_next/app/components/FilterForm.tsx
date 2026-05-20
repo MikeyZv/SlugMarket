@@ -4,6 +4,7 @@ import { useState } from "react";
 import ListingCard from "./ListingCard";
 import { Listing } from "@/lib/types";
 
+// This component renders a filter form for the product listings. It allows users to filter by category, condition, and price range.
 export default function FilterForm({ initialProducts }: { initialProducts: Listing[] }) {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [products, setProducts] = useState<Listing[]>(initialProducts);
@@ -26,14 +27,14 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
       {/* Filter Form */}
       <form
         onSubmit={handleFilter}
-        className="w-full bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row gap-4 items-center mb-8"
+        className="w-full bg-white p-4 rounded-lg shadow flex flex-col min-[770px]:flex-row gap-4 items-center mb-8"
       >
         <select
           value={filters.category || ""}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, category: e.target.value }))
           }
-          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-48"
+          className="border border-gray-300 rounded px-3 py-2 w-full min-[770px]:w-48"
         >
           <option value="">All Categories</option>
           <option value="electronics">Electronics</option>
@@ -48,7 +49,7 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, condition: e.target.value }))
           }
-          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-48"
+          className="border border-gray-300 rounded px-3 py-2 w-full min-[770px]:w-48"
         >
           <option value="">Any Conditions</option>
           <option value="New">New</option>
@@ -65,7 +66,7 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, minPrice: e.target.value }))
           }
-          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-32"
+          className="border border-gray-300 rounded px-3 py-2 w-full min-[770px]:w-32"
         />
 
         <input
@@ -75,7 +76,7 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
           }
-          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-32"
+          className="border border-gray-300 rounded px-3 py-2 w-full min-[770px]:w-32"
         />
 
         <button
@@ -87,7 +88,7 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
       </form>
 
       {/* Listings Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 auto-rows-fr">
+      <div className="grid grid-cols-1 min-[770px]:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 auto-rows-fr">
         {products.map((listing, index) => (
           <ListingCard
             key={listing.id}
