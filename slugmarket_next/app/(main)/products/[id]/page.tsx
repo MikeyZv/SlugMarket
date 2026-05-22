@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import ProductImageGallery from "../../../components/ProductImageGallery"
 import DeleteButton from "../../../components/DeleteButton"
 import EditButton from "../../../components/EditButton"
+import MessageButton from "../../../components/MessageButton"
 
 type ProductPageProps = {
     params: Promise<{
@@ -63,9 +64,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <div className="flex flex-col gap-4">
-                <button className="w-full rounded-xl bg-[#3567F1] py-3 md:py-4 text-lg md:text-2xl font-semibold text-white shadow-sm transition hover:bg-[#2f5de0]">
-                    Message
-                </button>
+                <MessageButton otherUserId={product.seller_id} />
 
             <div className="grid grid-cols-2 gap-4">
                 <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
