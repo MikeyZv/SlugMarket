@@ -24,7 +24,7 @@ export default function EditButton({ productId, sellerId }: EditButtonProps) {
     return (
         <Link
             href={`/products/edit/${productId}`}
-            className="block w-full rounded-xl border-2 border-black bg-white py-4 text-center text-xl font-semibold text-black transition hover:bg-gray-50"
+            className="block w-full rounded-xl border-2 border-black bg-white py-4 text-center text-2xl font-semibold text-black transition hover:bg-gray-50"
         >
             Edit Listing
         </Link>

@@ -117,11 +117,6 @@ export default function ProfileTabs({ listings, soldListings, profileId }: Props
           {soldListings.map((listing) => (
             <div key={listing.id} className="relative opacity-60">
               <ListingCard listing={listing} />
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="bg-black/70 text-white text-sm font-semibold px-3 py-1 rounded-full">
-                  Sold
-                </span>
-              </div>
             </div>
           ))}
         </div>

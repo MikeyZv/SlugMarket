@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     </p>
 
                     <p className="text-gray-500 text-lg">
-                        Listed Apr 26 in Santa Cruz, CA
+                        Listed {new Date(product.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </p>
                 </div>
 
@@ -100,10 +100,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </a>
     </div>
 
-    <p className="text-base text-gray-600">Local pickup available in Santa Cruz, CA</p>
-
-    <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls} />
     <EditButton productId={product.id} sellerId={product.seller_id} />
+    <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls} />
         </section>
             </div>
         </main>

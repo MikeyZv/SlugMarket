@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 
 // Helper function to fetch all products for home page
 export async function fetchProducts() {
-  const { data, error } = await supabase.from("product_listings").select("*").order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("product_listings").select("*").eq("sold", false).order("created_at", { ascending: false });
 
   if (error) {
     console.error("Supabase error:", error);

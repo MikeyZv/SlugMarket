@@ -10,10 +10,11 @@ type DeleteButtonProps = {
     productId: string;
     sellerId: string;
     imageUrls: string[];
+    className?: string;
 };
 
 // This component renders a delete button for a product listing. It checks if the current user is the seller before rendering.
-export default function DeleteButton({ productId, sellerId, imageUrls }: DeleteButtonProps) {
+export default function DeleteButton({ productId, sellerId, imageUrls, className }: DeleteButtonProps) {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -57,7 +58,7 @@ export default function DeleteButton({ productId, sellerId, imageUrls }: DeleteB
         <>
             <button
                 onClick={() => setShowModal(true)}
-                className="w-full rounded-xl border-2 border-red-500 bg-white py-4 text-2xl font-semibold text-red-500 transition hover:bg-red-50"
+                className={className ?? "w-full rounded-xl border-2 border-red-500 bg-white py-4 text-2xl font-semibold text-red-500 transition hover:bg-red-50"}
             >
                 Delete Listing
             </button>

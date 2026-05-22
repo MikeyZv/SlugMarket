@@ -23,6 +23,13 @@ export default function ListingCard({ listing, priority, onSelectListing}: Listi
           className="object-cover rounded-lg"
           priority={priority}
         />
+        {listing.sold && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+            <span className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-gray-900 shadow">
+              Sold
+            </span>
+          </div>
+        )}
       </div>
 
       <h2 className="text-lg font-semibold">{listing.title}</h2>
