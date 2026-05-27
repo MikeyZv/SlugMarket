@@ -4,6 +4,7 @@ import ProductImageGallery from "../../../components/ProductImageGallery"
 import DeleteButton from "../../../components/DeleteButton"
 import EditButton from "../../../components/EditButton"
 import MessageButton from "../../../components/MessageButton"
+import MakeOfferButton from "../../../components/MakeOfferButton"
 
 type ProductPageProps = {
     params: Promise<{
@@ -64,6 +65,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <div className="flex flex-col gap-4">
+                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} sellerId={product.seller_id} />
                 <MessageButton otherUserId={product.seller_id} />
 
             <div className="grid grid-cols-2 gap-4">

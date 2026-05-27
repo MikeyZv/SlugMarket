@@ -18,6 +18,15 @@ type Conversation = {
   user2: Profile;
 };
 
+type OfferDetails = {
+  id: string;
+  amount: number;
+  status: "pending" | "accepted" | "declined" | "withdrawn";
+  seller_id: string;
+  buyer_id: string;
+  listing: { id: string; title: string } | null;
+};
+
 type Message = {
   id: string;
   conversation_id: string;
@@ -25,6 +34,8 @@ type Message = {
   body: string;
   created_at: string;
   read_at: string | null;
+  offer_id: string | null;
+  offer?: OfferDetails | null;
 };
 
 function formatTime(ts: string) {
@@ -33,6 +44,60 @@ function formatTime(ts: string) {
   if (diffHours < 24) return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
   if (diffHours < 48) return "Yesterday";
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function OfferCard({
+  offer,
+  isFromMe,
+  currentUserId,
+  onStatusChange,
+}: {
+  offer: OfferDetails;
+  isFromMe: boolean;
+  currentUserId: string;
+  onStatusChange: (offerId: string, status: "accepted" | "declined") => void;
+}) {
+  const isSeller = currentUserId === offer.seller_id;
+  const isPending = offer.status === "pending";
+
+  const statusColor =
+    offer.status === "accepted"
+      ? "text-green-600"
+      : offer.status === "declined"
+      ? "text-red-500"
+      : "text-gray-400";
+
+  return (
+    <div className={`w-64 rounded-2xl border-2 border-yellow-300 bg-white p-4 shadow-sm ${isFromMe ? "self-end" : "self-start"}`}>
+      <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Offer</p>
+      {offer.listing && (
+        <a
+          href={`/products/${offer.listing.id}`}
+          className="font-semibold text-gray-900 text-sm hover:underline line-clamp-2 block mb-2"
+        >
+          {offer.listing.title}
+        </a>
+      )}
+      <p className="text-2xl font-bold text-gray-900">${Number(offer.amount).toLocaleString()}</p>
+      <p className={`text-xs font-medium mt-0.5 capitalize ${statusColor}`}>{offer.status}</p>
+      {isSeller && isPending && (
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={() => onStatusChange(offer.id, "accepted")}
+            className="flex-1 bg-green-500 text-white py-1.5 rounded-lg text-sm font-semibold hover:bg-green-600 transition"
+          >
+            Accept
+          </button>
+          <button
+            onClick={() => onStatusChange(offer.id, "declined")}
+            className="flex-1 bg-gray-100 text-gray-700 py-1.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition"
+          >
+            Decline
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MessagesContent() {
@@ -91,13 +156,15 @@ function MessagesContent() {
     async function load() {
       const { data } = await supabase
         .from("messages")
-        .select("id, conversation_id, sender_id, body, created_at, read_at")
+        .select(`
+          id, conversation_id, sender_id, body, created_at, read_at, offer_id,
+          offer:offers(id, amount, status, seller_id, buyer_id, listing:product_listings(id, title))
+        `)
         .eq("conversation_id", selectedId)
         .order("created_at", { ascending: true });
 
-      if (data) setMessages(data as Message[]);
+      if (data) setMessages(data as unknown as Message[]);
 
-      // Mark incoming unread messages as read
       await supabase
         .from("messages")
         .update({ read_at: new Date().toISOString() })
@@ -113,8 +180,19 @@ function MessagesContent() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${selectedId}` },
-        (payload) => {
-          const msg = payload.new as Message;
+        async (payload) => {
+          const raw = payload.new as Message;
+          let msg: Message = raw;
+
+          if (raw.offer_id) {
+            const { data: offer } = await supabase
+              .from("offers")
+              .select("id, amount, status, seller_id, buyer_id, listing:product_listings(id, title)")
+              .eq("id", raw.offer_id)
+              .single();
+            msg = { ...raw, offer: offer as OfferDetails | null };
+          }
+
           setMessages((prev) => [...prev, msg]);
           setConversations((prev) =>
             prev.map((c) =>
@@ -140,6 +218,19 @@ function MessagesContent() {
     const body = input.trim();
     setInput("");
     await supabase.from("messages").insert({ conversation_id: selectedId, sender_id: user.id, body });
+  }
+
+  async function handleOfferStatusChange(offerId: string, status: "accepted" | "declined") {
+    await supabase
+      .from("offers")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", offerId);
+
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.offer?.id === offerId ? { ...msg, offer: { ...msg.offer!, status } } : msg
+      )
+    );
   }
 
   function handleSelectConvo(id: string) {
@@ -228,18 +319,28 @@ function MessagesContent() {
               </div>
 
               <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
-                      msg.sender_id === user.id
-                        ? "bg-yellow-400 text-gray-900 self-end rounded-br-none"
-                        : "bg-gray-100 text-gray-800 self-start rounded-bl-none"
-                    }`}
-                  >
-                    {msg.body}
-                  </div>
-                ))}
+                {messages.map((msg) =>
+                  msg.offer_id && msg.offer ? (
+                    <OfferCard
+                      key={msg.id}
+                      offer={msg.offer}
+                      isFromMe={msg.sender_id === user.id}
+                      currentUserId={user.id}
+                      onStatusChange={handleOfferStatusChange}
+                    />
+                  ) : (
+                    <div
+                      key={msg.id}
+                      className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
+                        msg.sender_id === user.id
+                          ? "bg-yellow-400 text-gray-900 self-end rounded-br-none"
+                          : "bg-gray-100 text-gray-800 self-start rounded-bl-none"
+                      }`}
+                    >
+                      {msg.body}
+                    </div>
+                  )
+                )}
                 <div ref={bottomRef} />
               </div>
 
