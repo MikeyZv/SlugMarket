@@ -127,3 +127,25 @@ export async function fetchBookmarkCount(listingId: string) {
     throw err;
   }
 }
+
+export async function fetchOfferCount(listingId: string) {
+  try {
+    const { count, error } = await supabase
+      .from("offers")
+      .select("*", { count: "exact", head: true })
+      .eq("listing_id", listingId);
+
+    console.log("listingId passed in:", listingId);
+
+
+    if (error) {
+      console.error("Error fetching offer count:", error);
+      throw new Error("Failed to fetch offer count");
+    }
+
+    return count ?? 0;
+  } catch (err) {
+    console.error("Unexpected error in fetchOfferCount:", err);
+    throw err;
+  }
+}

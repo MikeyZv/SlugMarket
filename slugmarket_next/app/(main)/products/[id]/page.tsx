@@ -1,4 +1,4 @@
-import { fetchBookmarkCount, fetchProductById } from "@/lib/fetchProducts";
+import { fetchBookmarkCount, fetchProductById, fetchOfferCount } from "@/lib/fetchProducts";
 import { supabase } from "@/lib/supabase";
 import ProductImageGallery from "../../../components/ProductImageGallery"
 import DeleteButton from "../../../components/DeleteButton"
@@ -30,6 +30,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const sellerAvatarUrl = profile?.avatar_url ?? null;
 
     const bookmarkCount = await fetchBookmarkCount(id);
+    const offerCount = await fetchOfferCount(id);
     return (
         
         <main className="max-w-6xl mx-auto px-6 py-10">
@@ -51,6 +52,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     {/* Bookmarks */}
                     <p className="text-gray-600 text-lg">
                         {bookmarkCount} {bookmarkCount === 1 ? "bookmark" : "bookmarks"}
+                    </p>
+
+                    <p className="text-gray-600 text-lg">
+                        {offerCount} {offerCount === 1 ? "offer" : "offers"}
                     </p>
 
                     <p className="text-gray-500 text-lg">
