@@ -70,8 +70,8 @@ export default function Navbar() {
       {/* Top bar */}
       <nav className="border-b border-gray-300 bg-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-          <Link href="/" className="text-2xl font-bold shrink-0">
-            SlugMarket
+          <Link href="/" className="shrink-0">
+            <img src="/logo.png" alt="SlugMarket" className="h-16 w-auto" />
           </Link>
 
           {/* Search bar — hidden below 945px */}
