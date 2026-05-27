@@ -1,22 +1,58 @@
 import { fetchProducts } from "@/lib/fetchProducts";
 import FilterForm from "@/app/components/FilterForm";
+import Link from "next/link";
 
-// The HomePage component fetches all products from the database and renders the main landing page of the application. It includes a welcome message and a FilterForm component that allows users to filter products based on various criteria. The initial list of products is passed to the FilterForm as a prop, enabling it to display the products before any filters are applied.
 export default async function HomePage() {
   const products = await fetchProducts();
 
   return (
-    <main className="max-w-5xl mx-auto px-6 py-16 text-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">
-        Welcome to SlugMarket
-      </h1>
+    <main>
+      {/* Hero */}
+      <section className="bg-[#0F2044] text-white">
+        <div className="max-w-5xl mx-auto px-6 py-16 flex flex-col items-center text-center gap-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
+            Your UCSC <span className="text-[#F5C518]">Marketplace</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-xl">
+            Buy and sell with fellow Slugs. Local pickup, no fees, just students helping students.
+          </p>
+          <div className="flex gap-4 flex-wrap justify-center">
+            <Link
+              href="/products/create"
+              className="bg-[#F5C518] text-[#0F2044] font-bold px-8 py-3 rounded-full text-lg hover:bg-yellow-300 transition"
+            >
+              Start Selling
+            </Link>
+            <a
+              href="#listings"
+              className="border-2 border-white text-white font-bold px-8 py-3 rounded-full text-lg hover:bg-white hover:text-[#0F2044] transition"
+            >
+              Browse Listings
+            </a>
+          </div>
 
-      <p className="text-gray-500 text-lg mb-8">
-        Buy and sell with fellow UCSC students.
-      </p>
+          {/* Stats */}
+          <div className="mt-6 grid grid-cols-3 gap-6 w-full max-w-lg">
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-extrabold text-[#F5C518]">UCSC</span>
+              <span className="text-sm text-gray-300 mt-1">Students Only</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-extrabold text-[#F5C518]">Free</span>
+              <span className="text-sm text-gray-300 mt-1">To List</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-extrabold text-[#F5C518]">Local</span>
+              <span className="text-sm text-gray-300 mt-1">Pickup</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <FilterForm initialProducts={products} />
+      {/* Listings */}
+      <section id="listings" className="max-w-5xl mx-auto px-6 py-10">
+        <FilterForm initialProducts={products} />
+      </section>
     </main>
   );
-
 }
