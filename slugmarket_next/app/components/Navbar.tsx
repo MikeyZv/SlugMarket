@@ -71,7 +71,7 @@ export default function Navbar() {
       <nav className="border-b border-gray-300 bg-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
           <Link href="/" className="shrink-0">
-            <img src="/logo.png" alt="SlugMarket" className="h-16 w-auto" />
+            <img src="/logo2.png" alt="SlugMarket" className="h-20 w-auto" />
           </Link>
 
           {/* Search bar — hidden below 945px */}

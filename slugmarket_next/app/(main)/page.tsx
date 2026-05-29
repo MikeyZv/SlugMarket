@@ -30,22 +30,6 @@ export default async function HomePage() {
               Browse Listings
             </a>
           </div>
-
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-3 gap-6 w-full max-w-lg">
-            <div className="flex flex-col items-center">
-              <span className="text-2xl font-extrabold text-[#F5C518]">UCSC</span>
-              <span className="text-sm text-gray-300 mt-1">Students Only</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-2xl font-extrabold text-[#F5C518]">Free</span>
-              <span className="text-sm text-gray-300 mt-1">To List</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-2xl font-extrabold text-[#F5C518]">Local</span>
-              <span className="text-sm text-gray-300 mt-1">Pickup</span>
-            </div>
-          </div>
         </div>
       </section>
 

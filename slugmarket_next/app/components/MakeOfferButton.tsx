@@ -104,7 +104,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="w-full rounded-xl bg-[#FEF08A] py-3 md:py-4 text-lg md:text-2xl font-semibold text-black shadow-sm transition hover:bg-[#fde047]"
+                className="w-full rounded-xl bg-[#F5C518] py-3 md:py-4 text-lg md:text-2xl font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047]"
             >
                 Make Offer
             </button>
@@ -121,7 +121,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                                 </p>
                                 <button
                                     onClick={handleClose}
-                                    className="mt-2 w-full rounded-xl bg-[#3567F1] py-3 text-lg font-semibold text-white hover:bg-[#2f5de0] transition"
+                                    className="mt-2 w-full rounded-xl bg-[#0F2044] py-3 text-lg font-semibold text-white hover:bg-[#162d5a] transition"
                                 >
                                     Done
                                 </button>
@@ -147,7 +147,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                                         value={offerAmount}
                                         onChange={(e) => setOfferAmount(e.target.value)}
                                         placeholder="Enter your offer"
-                                        className="w-full rounded-xl border-2 border-gray-200 py-3 pl-8 pr-4 text-lg focus:border-[#3567F1] focus:outline-none"
+                                        className="w-full rounded-xl border-2 border-gray-200 py-3 pl-8 pr-4 text-lg focus:border-[#0F2044] focus:outline-none"
                                     />
                                 </div>
 
@@ -158,7 +158,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full rounded-xl bg-[#FEF08A] py-3 text-lg font-semibold text-black hover:bg-[#fde047] transition disabled:opacity-50"
+                                    className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] hover:bg-[#fde047] transition disabled:opacity-50"
                                 >
                                     {loading ? "Sending…" : "Send Offer"}
                                 </button>
