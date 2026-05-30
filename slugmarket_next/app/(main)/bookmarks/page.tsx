@@ -6,12 +6,16 @@ import { fetchBookmarkedProducts } from "@/lib/fetchProducts";
 import { useAuth } from "@/app/components/AuthProvider";
 import { Listing } from "@/lib/types";
 
+// This page displays the user's bookmarked items. 
+// It fetches the bookmarked products from the database when the component mounts and handles loading states and user authentication. 
+// If the user is not signed in, it prompts them to sign in to view their bookmarks.
 export default function BookmarksPage() {
   const { user, loading } = useAuth();
   const [products, setProducts] = useState<Listing[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
+    // Function to load bookmarked products for the authenticated user.
     async function loadBookmarks() {
       if (!user) {
         setProducts([]);
@@ -30,6 +34,7 @@ export default function BookmarksPage() {
       }
     }
 
+    // Load bookmarks once the user is authenticated and not loading.
     if (!loading) {
       loadBookmarks();
     }

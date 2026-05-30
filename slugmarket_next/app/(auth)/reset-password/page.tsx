@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+// This component renders the reset password page where users can set a new password after clicking the reset link in their email.
+// It listens for authentication state changes to determine when the user is ready to reset their password, and handles form 
+// submission to update the password using Supabase's updateUser method, with validation and error handling.
 export default function ResetPasswordPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
@@ -25,7 +28,6 @@ export default function ResetPasswordPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Handle form submission to update the user's password using Supabase's updateUser method, with validation and error handling
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (password !== confirm) {

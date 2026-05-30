@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+// This component renders the sign-up form for new users to create an account.
+// It includes fields for username, email, and password, with validation to ensure only @ucsc.edu email addresses are allowed.
+// The form handles submission by calling supabase.auth.signUp and redirects to the homepage on success, or shows an error message on failure. 
+// It also includes a toggle to show/hide the password input for better user experience.
 export default function SignUpPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -14,6 +18,8 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Handle form submission for creating a new account. 
+  // Validates email, calls supabase signUp, and manages loading and error states.
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
@@ -43,7 +49,7 @@ export default function SignUpPage() {
       router.push("/");
     }
   }
-
+  
   function togglePasswordVisibility() {
     setShowPassword((prev) => !prev);
   }

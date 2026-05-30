@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-// This API route handles POST requests to filter products based on category, price range, and condition. It constructs a query based on the provided filters and returns the matching products from the database.
+// This API route handles POST requests to filter products based on category, price range, and condition. 
+// It constructs a query based on the provided filters and returns the matching products from the database.
 export async function POST(req: Request) {
   const { category, minPrice, maxPrice, condition} = await req.json();
 

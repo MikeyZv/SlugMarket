@@ -8,6 +8,8 @@ import { formatTime } from "@/lib/utils";
 
 type Profile = { username: string; avatar_url: string | null };
 
+// Conversation type includes the IDs of the two users involved, the last message details for previewing in the conversation list, and the related user profiles for displaying usernames and avatars. 
+// This structure allows us to efficiently display a list of conversations with relevant information without needing to load all messages upfront.
 type Conversation = {
   id: string;
   user1_id: string;
@@ -19,6 +21,8 @@ type Conversation = {
   user2: Profile;
 };
 
+// OfferDetails includes the offer amount, status, related listing information, and the IDs of the buyer and seller. 
+// This is used to display offer messages in the conversation thread and allow sellers to accept or decline offers directly from the message thread.
 type OfferDetails = {
   id: string;
   amount: number;
@@ -28,6 +32,8 @@ type OfferDetails = {
   listing: { id: string; title: string } | null;
 };
 
+// Message type includes the message body, sender information, timestamps, and optionally related offer details if the message is an offer. 
+// This allows us to display both regular text messages and offer messages in the conversation thread with all necessary information for rendering and interactions.
 type Message = {
   id: string;
   conversation_id: string;
@@ -39,7 +45,9 @@ type Message = {
   offer?: OfferDetails | null;
 };
 
-
+// OfferCard component displays an offer message within the conversation thread. 
+// It shows the offer amount, status, and related listing information. 
+// If the current user is the seller and the offer is pending, it also provides buttons to accept or decline the offer, allowing for quick interactions directly from the message thread.
 function OfferCard({
   offer,
   isFromMe,
@@ -94,6 +102,9 @@ function OfferCard({
   );
 }
 
+// MessagesContent component handles the main logic for the messages page, including loading conversations, selecting a 
+// conversation, loading messages for the selected conversation, sending new messages, and handling offer status changes. 
+// It also manages the responsive layout for mobile and desktop views.
 function MessagesContent() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -111,7 +122,9 @@ function MessagesContent() {
     if (!authLoading && !user) router.replace("/signin");
   }, [authLoading, user, router]);
 
-  // Load conversations
+  // Load conversations for the current user when the component mounts. 
+  // It fetches conversations where the user is either user1 or user2, along with the related user profiles for displaying usernames and avatars in the conversation list. 
+  // Conversations are ordered by the last update time to show the most recent conversations first.
   useEffect(() => {
     if (!user) return;
 
@@ -133,7 +146,8 @@ function MessagesContent() {
     load();
   }, [user]);
 
-  // Select conversation from URL param once conversations are loaded
+  // When the search parameter "c" (conversation ID) changes, select the corresponding conversation and switch to the thread view on mobile. 
+  // This allows deep linking to specific conversations and ensures that the correct conversation is displayed when navigating directly to a URL with a conversation ID.
   useEffect(() => {
     const c = searchParams.get("c");
     if (c) {
@@ -142,11 +156,12 @@ function MessagesContent() {
     }
   }, [searchParams, conversations]);
 
-  // Load messages and subscribe to real-time when a conversation is selected
   useEffect(() => {
     if (!selectedId || !user) return;
     setMessages([]);
 
+    // Load messages for the selected conversation. It fetches messages along with related offer details if the message is an offer. 
+    // After loading messages, it also marks all messages from the other user as read by updating the read_at timestamp, ensuring that the conversation's read status is accurate.
     async function load() {
       const { data } = await supabase
         .from("messages")
@@ -169,6 +184,9 @@ function MessagesContent() {
 
     load();
 
+    // Set up real-time subscription to new messages in the selected conversation. 
+    // When a new message is inserted, it checks if it's related to an offer and fetches the offer details if necessary, then updates the messages state and the conversation's last message preview. 
+    // The subscription is cleaned up when the component unmounts or when the selected conversation changes to avoid memory leaks and ensure that we are only subscribed to the relevant conversation.
     const channel = supabase
       .channel(`messages:${selectedId}`)
       .on(
@@ -207,6 +225,9 @@ function MessagesContent() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Handle sending a new message by inserting it into the database. 
+  // It checks that the input is not empty, that a conversation is selected, and that the user is authenticated before sending. 
+  // After sending the message, it clears the input field. The real-time subscription will handle adding the new message to the thread and updating the conversation preview.
   async function sendMessage() {
     if (!input.trim() || !selectedId || !user) return;
     const body = input.trim();
@@ -214,6 +235,8 @@ function MessagesContent() {
     await supabase.from("messages").insert({ conversation_id: selectedId, sender_id: user.id, body });
   }
 
+  // Handle offer status changes by updating the offer's status in the database and then updating the local messages state to reflect the new status. 
+  // This allows for real-time updates to offer messages in the conversation thread when a seller accepts or declines an offer, providing immediate feedback to both parties.
   async function handleOfferStatusChange(offerId: string, status: "accepted" | "declined") {
     await supabase
       .from("offers")
@@ -227,6 +250,7 @@ function MessagesContent() {
     );
   }
 
+  // Handle selecting a conversation by updating the selected conversation ID, switching to the thread view on mobile, and updating the URL with the selected conversation ID.
   function handleSelectConvo(id: string) {
     setSelectedId(id);
     setMobileView("thread");
@@ -237,6 +261,8 @@ function MessagesContent() {
 
   const selected = conversations.find((c) => c.id === selectedId);
 
+  // Helper function to get the other user's profile in a conversation. 
+  // It checks if the current user is user1 or user2 in the conversation and returns the opposite profile for displaying the other user's information in the conversation list and thread header.
   function getOtherUser(convo: Conversation): Profile {
     return convo.user1_id === user!.id ? convo.user2 : convo.user1;
   }
@@ -366,6 +392,9 @@ function MessagesContent() {
   );
 }
 
+// MessagesPage component is the main entry point for the messages page. 
+// It uses Suspense to lazily load the MessagesContent component, which contains all the logic and UI for displaying conversations and message threads. 
+// This allows for better performance by only loading the messages functionality when needed.
 export default function MessagesPage() {
   return (
     <Suspense fallback={null}>

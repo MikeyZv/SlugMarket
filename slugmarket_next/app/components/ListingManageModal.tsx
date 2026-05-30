@@ -13,6 +13,8 @@ type ListingManageModalProps = {
     onClose: () => void;
 }
 
+// This component renders a modal for managing a product listing. 
+// It allows the seller to view the listing details, navigate to the listing page, mark it as sold, edit it, or delete it.
 export default function ListingManageModal({ listing, onClose }: ListingManageModalProps) {
     const router = useRouter()
     const [saving, setSaving] = useState(false)

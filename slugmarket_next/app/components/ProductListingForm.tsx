@@ -33,7 +33,9 @@ export type ProductListingFormProps = {
     initialImageUrls?: string[];
 }
 
-// This component renders a form for creating or editing a product listing. It handles form state, image uploads, and submission logic. It also checks for user authentication and redirects to sign in if necessary.
+// This component renders a form for creating or editing a product listing. 
+// It handles form state, image uploads, and submission logic. 
+// It also checks for user authentication and redirects to sign in if necessary.
 export default function ProductListingForm({ mode, listingId, initialForm, initialImageUrls = [],}: ProductListingFormProps) {
     const { user, loading } = useAuth()
     const router = useRouter()
@@ -101,6 +103,8 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
         });
     }
     
+    // Helper function to upload local image files to Supabase storage and return their public URLs. 
+    // It generates unique file names using the user ID and a timestamp.
     async function uploadLocals(files: File[], userId: string) {
         if (files.length === 0) return []
 
@@ -121,7 +125,9 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
         return uploads
     }
 
-    // Main form submission handler. It validates the form, uploads any new local images, and then either creates a new listing or updates an existing one in the database. It also handles error states and redirects to the appropriate page on success.
+    // Main form submission handler. 
+    // It validates the form, uploads any new local images, and then either creates a new listing or updates an existing one in the database. 
+    // It also handles error states and redirects to the appropriate page on success.
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         if (!user) {

@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+// This component renders the sign-in form for existing users to log into their accounts.
+// It includes fields for email and password, with a toggle to show/hide the password input.
+// The form handles submission by calling supabase.auth.signInWithPassword and redirects to the homepage on success, or shows an error message on failure. 
+// It also provides links for users to reset their password or create a new account if they don't have one.
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -13,7 +17,9 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+  // Handle form submission for logging in an existing user.
+  // Calls supabase.auth.signInWithPassword and manages loading and error states.
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);

@@ -17,7 +17,9 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-// This provider should wrap the entire app to provide auth state to all components
+// The AuthProvider component initializes the authentication state by checking for an existing session and listening for auth state changes. 
+// It also fetches the user's avatar URL from the profiles table whenever the user changes. 
+// The context value includes the user, session, loading state, avatar URL, and a function to update the avatar URL.
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const [session, setSession] = useState<Session | null>(null)
     const [user, setUser] = useState<User | null>(null)

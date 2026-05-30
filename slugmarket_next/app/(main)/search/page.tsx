@@ -2,6 +2,9 @@
 import NavSearchBar from "@/app/components/NavSearchBar";
 import { fetchProductByQuery } from "@/lib/fetchProducts";
 
+// SearchPage component is responsible for rendering the search results page.
+// It retrieves the search query from the URL parameters, fetches the matching products from the database, and displays them in a grid layout.
+// It also includes a search bar for users to input new queries, and handles the case where no query is entered or no results are found.
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
     const { q } = await searchParams;
     const query = q ?? "";

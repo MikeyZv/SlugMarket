@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-// This component renders a forgot password form that allows users to request a password reset email. It handles form submission, shows loading and error states, and displays a confirmation message after a successful request.
+// This component renders a forgot password form that allows users to request a password reset email. 
+// It handles form submission, shows loading and error states, and displays a confirmation message after a successful request.
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
-// 
+// This component renders a search bar in the navigation that allows users to search for listings. 
+// It manages the search query state, handles form submission to navigate to the search results page, and clears the search input when navigating to a different page.
 export default function NavSearchBar() {
     const router = useRouter()
     const pathname = usePathname()

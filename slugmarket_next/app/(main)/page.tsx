@@ -2,6 +2,9 @@ import { fetchProducts } from "@/lib/fetchProducts";
 import FilterForm from "@/app/components/FilterForm";
 import Link from "next/link";
 
+// HomePage component is the main landing page of the application. 
+// It fetches a list of products from the database and displays them using the FilterForm component, which allows users to filter and browse through the listings. 
+// The page also includes a hero section with a call-to-action for users to start selling or browse listings.
 export default async function HomePage() {
   const products = await fetchProducts();
 

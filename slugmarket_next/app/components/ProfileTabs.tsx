@@ -13,6 +13,9 @@ type Props = {
   profileId: string;
 };
 
+// This component renders the profile tabs for a user's profile page, including active listings, sold listings, and bookmarks (if it's the user's own profile). 
+// It manages the active tab state and fetches bookmarked products when the bookmarks tab is selected for the first time. 
+// It also handles loading states and displays appropriate messages when there are no listings or bookmarks.
 export default function ProfileTabs({ listings, soldListings, profileId }: Props) {
   const { user } = useAuth();
   const isOwnProfile = !!user && user.id === profileId;

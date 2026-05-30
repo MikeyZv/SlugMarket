@@ -3,7 +3,10 @@ import { fetchProductsBySellerId, fetchSoldListingsBySellerId } from "@/lib/fetc
 import ProfileTabs from "../../components/ProfileTabs";
 import AvatarUpload from "../../components/AvatarUpload";
 
-// This page is rendered server-side to fetch the user's listings before rendering the profile page
+// ProfilePage component is responsible for rendering the user's profile page.
+// It retrieves the username from the URL parameters, looks up the user's profile information from the database, and fetches their active and sold listings.
+// The page displays the user's avatar, username, and tabs for their active and sold listings. 
+// If the user is not found, it shows a "User not found" message.
 export default async function ProfilePage({
   params,
 }: {
