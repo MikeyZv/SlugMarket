@@ -88,6 +88,10 @@ export default function SignInPage() {
             {loading ? "Signing in…" : "Log In"}
           </button>
 
+          <Link href="/forgot-password" className="text-gray-500 text-sm hover:underline">
+            Forgot password?
+          </Link>
+
           <p>
             New user?{" "}
             <Link href="/signup" className="text-blue-500 hover:underline">
