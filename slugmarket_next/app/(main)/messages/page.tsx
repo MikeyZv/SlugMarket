@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/app/components/AuthProvider";
+import { formatTime } from "@/lib/utils";
 
 type Profile = { username: string; avatar_url: string | null };
 
@@ -38,13 +39,6 @@ type Message = {
   offer?: OfferDetails | null;
 };
 
-function formatTime(ts: string) {
-  const date = new Date(ts);
-  const diffHours = (Date.now() - date.getTime()) / (1000 * 60 * 60);
-  if (diffHours < 24) return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-  if (diffHours < 48) return "Yesterday";
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
 
 function OfferCard({
   offer,
