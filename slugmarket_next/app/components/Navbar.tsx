@@ -88,12 +88,11 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex flex-col items-center gap-1 text-sm ${getLinkClasses(link.href)}`}
+                  className={`flex flex-col items-center ${getLinkClasses(link.href)}`}
                 >
                   {isProfile && avatarUrl
-                    ? <img src={avatarUrl} alt="avatar" className="w-11 h-11 rounded-full object-cover" />
-                    : <Icon size={22} strokeWidth={2} />}
-                  {!(isProfile && avatarUrl) && <span>{link.label}</span>}
+                    ? <img src={avatarUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                    : <Icon size={24} strokeWidth={2} />}
                 </Link>
               );
             })}
@@ -102,10 +101,9 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-blue-600"
+                className="flex flex-col items-center text-gray-700 hover:text-blue-600"
               >
-                <LogOut size={22} strokeWidth={2} />
-                <span>Sign Out</span>
+                <LogOut size={24} strokeWidth={2} />
               </button>
             )}
           </div>
@@ -122,12 +120,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${getLinkClasses(link.href)}`}
+                className={`flex flex-col items-center px-3 py-1 ${getLinkClasses(link.href)}`}
               >
                 {isProfile && avatarUrl
-                  ? <img src={avatarUrl} alt="avatar" className="w-7 h-7 rounded-full object-cover" />
-                  : <Icon size={20} strokeWidth={2} />}
-                <span>{link.label}</span>
+                  ? <img src={avatarUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                  : <Icon size={24} strokeWidth={2} />}
               </Link>
             );
           })}
@@ -136,10 +133,9 @@ export default function Navbar() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="flex flex-col items-center gap-0.5 text-xs px-3 py-1 text-gray-700 hover:text-blue-600"
+              className="flex flex-col items-center px-3 py-1 text-gray-700 hover:text-blue-600"
             >
-              <LogOut size={20} strokeWidth={2} />
-              <span>Sign Out</span>
+              <LogOut size={24} strokeWidth={2} />
             </button>
           )}
         </div>
