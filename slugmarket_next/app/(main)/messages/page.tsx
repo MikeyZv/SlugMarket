@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/app/components/AuthProvider";
 import { formatTime } from "@/lib/utils";
+import { matchesGlob } from "path";
 
 type Profile = { username: string; avatar_url: string | null };
 
@@ -29,7 +30,7 @@ type OfferDetails = {
   status: "pending" | "accepted" | "declined" | "withdrawn";
   seller_id: string;
   buyer_id: string;
-  listing: { id: string; title: string } | null;
+  listing: { id: string; title: string, image_urls: string[] } | null;
 };
 
 // Message type includes the message body, sender information, timestamps, and optionally related offer details if the message is an offer. 
@@ -78,6 +79,10 @@ function OfferCard({
           className="font-semibold text-gray-900 text-sm hover:underline line-clamp-2 block mb-2"
         >
           {offer.listing.title}
+          <img
+            src={offer.listing.image_urls[0]}
+            className="w-full h-32 object-cover rounded-lg mb-2"
+          />
         </a>
       )}
       <p className="text-2xl font-bold text-gray-900">${Number(offer.amount).toLocaleString()}</p>
@@ -167,7 +172,7 @@ function MessagesContent() {
         .from("messages")
         .select(`
           id, conversation_id, sender_id, body, created_at, read_at, offer_id,
-          offer:offers(id, amount, status, seller_id, buyer_id, listing:product_listings(id, title))
+          offer:offers(id, amount, status, seller_id, buyer_id, listing:product_listings(id, title, image_urls))
         `)
         .eq("conversation_id", selectedId)
         .order("created_at", { ascending: true });
@@ -339,28 +344,42 @@ function MessagesContent() {
               </div>
 
               <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
-                {messages.map((msg) =>
-                  msg.offer_id && msg.offer ? (
-                    <OfferCard
-                      key={msg.id}
-                      offer={msg.offer}
-                      isFromMe={msg.sender_id === user.id}
-                      currentUserId={user.id}
-                      onStatusChange={handleOfferStatusChange}
-                    />
-                  ) : (
+                {messages.map((msg) => {
+                  const isFromMe = msg.sender_id === user.id
+                  return (
                     <div
                       key={msg.id}
-                      className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
-                        msg.sender_id === user.id
-                          ? "bg-yellow-400 text-gray-900 self-end rounded-br-none"
-                          : "bg-gray-100 text-gray-800 self-start rounded-bl-none"
-                      }`}
+                      className={`flex flex-col ${isFromMe ? "items-end" : "items-start"}`}
                     >
-                      {msg.body}
-                    </div>
-                  )
+                    
+                      {msg.offer_id && msg.offer ? (
+                        <OfferCard
+                          key={msg.id}
+                          offer={msg.offer}
+                          isFromMe={msg.sender_id === user.id}
+                          currentUserId={user.id}
+                          onStatusChange={handleOfferStatusChange}
+                        />
+                      ) : (
+                        <div
+                          key={msg.id}
+                          className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
+                            msg.sender_id === user.id
+                              ? "bg-yellow-400 text-gray-900 self-end rounded-br-none"
+                              : "bg-gray-100 text-gray-800 self-start rounded-bl-none"
+                          }`}
+                        >
+                          {msg.body}
+                        </div>
+                      )}
+
+                      <div className="mt-1 text-[10px] text-gray-400">
+                        {formatTime(msg.created_at)}
+                      </div>
+                  </div>
+                  )}
                 )}
+
                 <div ref={bottomRef} />
               </div>
 

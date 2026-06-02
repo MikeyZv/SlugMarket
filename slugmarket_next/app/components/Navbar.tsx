@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/lib/supabase";
 import NavSearchBar from "./NavSearchBar";
+import NotificationBell from "./NotificationBell";
 import {
   House,
   Search,
@@ -97,6 +98,8 @@ export default function Navbar() {
               );
             })}
 
+            {user && <NotificationBell />}
+
             {user && (
               <button
                 type="button"
@@ -128,6 +131,8 @@ export default function Navbar() {
               </Link>
             );
           })}
+
+          {user && <NotificationBell />}
 
           {user && (
             <button

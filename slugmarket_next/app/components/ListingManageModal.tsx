@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Listing } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
 import DeleteButton from "./DeleteButton"
+import { useAuth } from "./AuthProvider"
 
 type Profile = { id: string; username: string }
 
@@ -17,6 +18,7 @@ type ListingManageModalProps = {
 
 export default function ListingManageModal({ listing, onClose }: ListingManageModalProps) {
     const router = useRouter()
+    const { user } = useAuth()
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [confirmingSold, setConfirmingSold] = useState(false)
@@ -25,6 +27,8 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
     const [selectedBuyer, setSelectedBuyer] = useState<Profile | null>(null)
     const [showSuggestions, setShowSuggestions] = useState(false)
     const suggestionRef = useRef<HTMLDivElement>(null)
+
+    const myUsername = user?.user_metadata?.username
 
     // Fetch buyer suggestions when the buyer query changes and the user is confirming the sale. 
     // It uses a debounced effect to avoid making too many requests while the user is typing, and 
@@ -44,12 +48,12 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
                 .select("id, username")
                 .ilike("username", `%${buyerQuery.trim()}%`)
                 .limit(5)
-            setBuyerSuggestions(data ?? [])
+            setBuyerSuggestions((data ?? []).filter((p) => p.username !== myUsername))
             setShowSuggestions(true)
         }, 200)
 
         return () => clearTimeout(timer)
-    }, [buyerQuery, confirmingSold])
+    }, [buyerQuery, confirmingSold, myUsername])
 
     // Effect to handle clicks outside the buyer suggestions dropdown, which 
     // will close the suggestions when the user clicks elsewhere on the page.
@@ -64,12 +68,17 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
     }, [])
 
     async function handleConfirmSale() {
+        if (!selectedBuyer?.id) {
+            setError("Please select a buyer from the list.")
+            return
+        }
+
         setSaving(true)
         setError(null)
 
         const { error: updateError } = await supabase
             .from("product_listings")
-            .update({ sold: true, buyer_id: selectedBuyer?.id ?? null })
+            .update({ sold: true, buyer_id: selectedBuyer.id })
             .eq("id", listing.id)
 
         setSaving(false)
@@ -189,7 +198,7 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
                         <button
                             type="button"
                             onClick={handleConfirmSale}
-                            disabled={saving}
+                            disabled={saving || !selectedBuyer}
                             className="w-full rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             {saving ? "Saving..." : selectedBuyer ? `Confirm sale to @${selectedBuyer.username}` : "Confirm sale"}
