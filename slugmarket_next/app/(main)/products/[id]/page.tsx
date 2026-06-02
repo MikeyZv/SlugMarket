@@ -86,17 +86,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="flex flex-col gap-4">
                 <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} sellerId={product.seller_id} />
                 <MessageButton otherUserId={product.seller_id} />
-
-            <div className="grid grid-cols-2 gap-4">
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
-                    Share
-                </button>
-
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
-                    Report
-                </button>
             </div>
-    </div>
 
     <hr className="border-gray-300" />
 
@@ -118,6 +108,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
             <span className="text-gray-900 font-medium">@{sellerUsername}</span>
         </a>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+        <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
+            Share
+        </button>
+        <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
+            Report
+        </button>
     </div>
 
     {product.sold && (

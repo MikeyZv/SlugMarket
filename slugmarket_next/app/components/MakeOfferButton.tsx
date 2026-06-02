@@ -103,7 +103,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
     return (
         <>
             <button
-                onClick={() => setOpen(true)}
+                onClick={() => { if (!user) { router.push("/signin"); return; } setOpen(true); }}
                 className="w-full rounded-xl bg-[#F5C518] py-3 md:py-4 text-lg md:text-2xl font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047]"
             >
                 Make Offer
