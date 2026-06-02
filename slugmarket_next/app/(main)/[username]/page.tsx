@@ -28,6 +28,22 @@ export default async function ProfilePage({
         fetchSoldListingsBySellerId(profile.id),
       ])
     : [[], []];
+
+  // Batch-fetch buyer usernames for sold listings that have a buyer_id
+  const buyerIds = (soldListings ?? [])
+    .map((l) => l.buyer_id)
+    .filter((id): id is string => !!id);
+
+  let buyerUsernames: Record<string, string> = {};
+  if (buyerIds.length > 0) {
+    const { data: buyers } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", buyerIds);
+    for (const b of buyers ?? []) {
+      buyerUsernames[b.id] = b.username;
+    }
+  }
  // Render the profile page with the user's listings and sold items
   return (
     <main className="w-full max-w-4xl mx-auto px-6 py-12">
@@ -47,7 +63,7 @@ export default async function ProfilePage({
       {!profile ? (
         <p className="text-gray-400 italic">User not found.</p>
       ) : (
-        <ProfileTabs listings={listings ?? []} soldListings={soldListings ?? []} profileId={profile.id} />
+        <ProfileTabs listings={listings ?? []} soldListings={soldListings ?? []} profileId={profile.id} buyerUsernames={buyerUsernames} />
       )}
     </main>
   );

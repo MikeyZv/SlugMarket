@@ -33,6 +33,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const sellerUsername = profile?.username ?? "unknown";
     const sellerAvatarUrl = profile?.avatar_url ?? null;
 
+    let buyerUsername: string | null = null;
+    if (product.sold && product.buyer_id) {
+        const { data: buyerProfile } = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("id", product.buyer_id)
+            .single();
+        buyerUsername = buyerProfile?.username ?? null;
+    }
+
     const bookmarkCount = await fetchBookmarkCount(id);
     const offerCount = await fetchOfferCount(id);
     return (
@@ -109,6 +119,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <span className="text-gray-900 font-medium">@{sellerUsername}</span>
         </a>
     </div>
+
+    {product.sold && (
+        <div className="flex items-center gap-2 rounded-xl bg-green-50 border border-green-200 px-4 py-3">
+            <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">Sold</span>
+            {buyerUsername ? (
+                <span className="text-sm text-gray-700">
+                    Sold to{" "}
+                    <a href={`/${buyerUsername}`} className="font-semibold text-gray-900 hover:underline">
+                        @{buyerUsername}
+                    </a>
+                </span>
+            ) : (
+                <span className="text-sm text-gray-500">This item has been sold.</span>
+            )}
+        </div>
+    )}
 
     <EditButton productId={product.id} sellerId={product.seller_id} />
     <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls} />

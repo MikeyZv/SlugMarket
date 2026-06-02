@@ -7,4 +7,6 @@ export type Listing = {
   image_urls: string[];
   seller_id: string;
   sold: boolean;
+  buyer_id?: string | null;
+  created_at: string;
 };
