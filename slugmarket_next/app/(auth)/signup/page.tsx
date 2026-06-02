@@ -34,8 +34,6 @@ export default function SignUpPage() {
       },
     });
 
-    console.log("signUp result:", { data, error });
-
     setLoading(false);
 
     if (error) {

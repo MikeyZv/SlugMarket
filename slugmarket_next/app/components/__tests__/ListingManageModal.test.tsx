@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import ListingManageModal from "../ListingManageModal";
+import * as AuthProvider from "../AuthProvider";
 import type { Listing } from "@/lib/types";
 
 // vi.hoisted ensures these are available inside the vi.mock factory below
@@ -26,6 +27,10 @@ vi.mock("next/link", () => ({
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: mockRefresh }),
+}));
+
+vi.mock("../AuthProvider", () => ({
+  useAuth: vi.fn(),
 }));
 
 vi.mock("../DeleteButton", () => ({
@@ -64,6 +69,7 @@ describe("ListingManageModal", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.mocked(AuthProvider.useAuth).mockReturnValue({ user: null } as ReturnType<typeof AuthProvider.useAuth>);
     onClose.mockClear();
     mockRefresh.mockClear();
     mockLimit.mockResolvedValue({ data: [], error: null });
@@ -200,18 +206,10 @@ describe("ListingManageModal", () => {
   // --- Confirm sale ---
   // act(async) flushes the async supabase call so we can assert synchronously after.
 
-  it("confirms the sale without a buyer and calls update with buyer_id: null", async () => {
+  it("confirm button is disabled until a buyer is selected", () => {
     render(<ListingManageModal listing={baseListing} onClose={onClose} />);
     fireEvent.click(screen.getByRole("button", { name: /mark as sold/i }));
-
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: /^confirm sale$/i }));
-    });
-
-    expect(mockUpdate).toHaveBeenCalledWith({ sold: true, buyer_id: null });
-    expect(mockUpdateEq).toHaveBeenCalledWith("id", "listing-1");
-    expect(onClose).toHaveBeenCalledTimes(1);
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: /confirm sale/i })).toBeDisabled();
   });
 
   it("confirms the sale with a selected buyer and passes buyer_id", async () => {
@@ -233,13 +231,19 @@ describe("ListingManageModal", () => {
   });
 
   it("shows an error message when the sale update fails", async () => {
+    mockLimit.mockResolvedValue({ data: [{ id: "buyer-1", username: "janedoe" }], error: null });
     mockUpdateEq.mockResolvedValue({ error: { message: "Permission denied" } });
 
     render(<ListingManageModal listing={baseListing} onClose={onClose} />);
     fireEvent.click(screen.getByRole("button", { name: /mark as sold/i }));
+    fireEvent.change(screen.getByPlaceholderText("Search by username…"), { target: { value: "jane" } });
+
+    await act(async () => { vi.advanceTimersByTime(250); });
+
+    fireEvent.mouseDown(screen.getByRole("button", { name: "@janedoe" }));
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: /^confirm sale$/i }));
+      fireEvent.click(screen.getByRole("button", { name: /confirm sale to @janedoe/i }));
     });
 
     expect(screen.getByText("Permission denied")).toBeInTheDocument();
@@ -248,14 +252,20 @@ describe("ListingManageModal", () => {
   });
 
   it("shows 'Saving...' while the update is in progress", async () => {
+    mockLimit.mockResolvedValue({ data: [{ id: "buyer-1", username: "janedoe" }], error: null });
     mockUpdateEq.mockReturnValue(new Promise(() => {})); // never resolves
 
     render(<ListingManageModal listing={baseListing} onClose={onClose} />);
     fireEvent.click(screen.getByRole("button", { name: /mark as sold/i }));
+    fireEvent.change(screen.getByPlaceholderText("Search by username…"), { target: { value: "jane" } });
+
+    await act(async () => { vi.advanceTimersByTime(250); });
+
+    fireEvent.mouseDown(screen.getByRole("button", { name: "@janedoe" }));
 
     // setSaving(true) fires synchronously before the awaited supabase call
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: /^confirm sale$/i }));
+      fireEvent.click(screen.getByRole("button", { name: /confirm sale to @janedoe/i }));
     });
 
     expect(screen.getByText("Saving...")).toBeInTheDocument();
