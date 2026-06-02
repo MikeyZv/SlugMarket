@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase"
 import { useAuth } from "./AuthProvider"
 import type { Notification } from "@/lib/types";
 
+// Notification bell component that shows unread count and a dropdown of notifications on click
 export default function NotificationBell() {
     const { user } = useAuth()
     const [open, setOpen] = useState(false)
