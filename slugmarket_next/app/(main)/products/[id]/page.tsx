@@ -84,7 +84,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <div className="flex flex-col gap-4">
-                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} sellerId={product.seller_id} />
+                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} listingImageUrl={product.image_urls[0]} sellerId={product.seller_id} />
                 <MessageButton otherUserId={product.seller_id} />
             </div>
 

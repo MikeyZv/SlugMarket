@@ -21,12 +21,30 @@ export default function NotificationBell() {
             .select("*")
             .eq("user_id", user.id)
             .order("created_at", { ascending: false})
-            .limit(20)
+            .limit(10)
             .then(({ data}) => {
                 if (data) setNotifications(data)
             })
 
-    }, [user])
+        // adding new notificatons in real time
+        const channel = supabase
+            .channel(`notifications:${user.id}:${Date.now()}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "notifications",
+                    filter: `user_id=eq.${user.id}`
+                },
+                (payload) => {
+                    setNotifications((prev) => [payload.new as Notification, ...prev])
+                }
+            )
+            .subscribe()
+        
+        return () => { supabase.removeChannel(channel)}
+    }, [user?.id])
 
     // mark all unread notifications as read when popup opens
     useEffect(() => {
@@ -69,14 +87,34 @@ export default function NotificationBell() {
 
             {/* Dropdown popup */}
             {open && (
-                <div className="absolute right-0 mt-3 w-72 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute right-0 mt-0 w-72 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
                     {notifications.length === 0
                         ? <p className="p-4 text-sm text-gray-500">No notifications</p>
-                        : notifications.map((n) => 
-                            <div key={n.id} className={`px-4 py-3 text-sm border-b last:border-0 ${n.read ? "text-gray-500" : "font-semibold text-gray-800"}`}>
-                                {n.message}
-                            </div>
-                        )
+                        : notifications.map((n) => {
+                            const inner = (
+                                <>
+                                    {n.image_url && (
+                                        <img
+                                            src={n.image_url}
+                                            className="w-10 h-10 rounded-lg object-cover shrink-0"
+                                        />
+                                    )}
+                                    <span>{n.message}</span>
+                                </>
+                            )
+                            const cls = `flex items-center gap-3 px-4 py-3 text-sm border-b last:border-0 ${n.read ? "text-gray-500" : "font-semibold text-gray-800"}`
+
+                            return n.link
+                                ? <Link
+                                    key={n.id}
+                                    href={n.link}
+                                    onClick={() => setOpen(false)}
+                                    className={cls + " hover:bg-gray-50"}
+                                  >
+                                    {inner}
+                                  </Link>
+                                : <div key={n.id} className={cls}>{inner}</div>
+                        })
                     }
                 </div>
             )}

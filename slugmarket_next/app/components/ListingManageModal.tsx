@@ -102,6 +102,7 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
             .insert({
                 user_id: selectedBuyer.id,
                 message: `Your purchase of "${listing.title} was confirmed! Give @${myUsername} a review.`,
+                image_url: listing.image_urls[0]
             })
 
         onClose()

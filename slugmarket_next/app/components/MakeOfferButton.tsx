@@ -9,10 +9,11 @@ type Props = {
     listingPrice: number;
     listingId: string;
     listingTitle: string;
+    listingImageUrl: string
     sellerId: string;
 };
 
-export default function MakeOfferButton({ listingPrice, listingId, listingTitle, sellerId }: Props) {
+export default function MakeOfferButton({ listingPrice, listingId, listingTitle, listingImageUrl, sellerId }: Props) {
     const { user } = useAuth();
     const router = useRouter();
     const [open, setOpen] = useState(false);
@@ -90,7 +91,8 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                 .insert({
                     user_id: sellerId,
                     message: `New offer of ${Number(offerAmount)}`,
-                    link: `/messages?c=${user.id}`
+                    link: `/messages?c=${conversationId}`,
+                    image_url: listingImageUrl
                 })
             
             setSubmitted(true);

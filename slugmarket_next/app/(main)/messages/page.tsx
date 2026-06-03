@@ -113,7 +113,11 @@ function MessagesContent() {
     }
 
     async function handleOfferStatusChange(offerId: string, status: "accepted" | "declined") {
-        const {data: offer} = await supabase.from("offers").update({ status, updated_at: new Date().toISOString() }).eq("id", offerId).select("buyer_id, seller_id, amount").single()
+        const {data: offer} = await supabase
+          .from("offers")
+          .update({ status, updated_at: new Date().toISOString() })
+          .eq("id", offerId).select("buyer_id, amount, listing:product_listings(image_urls)")
+          .single()
         setMessages((prev) =>
             prev.map((msg) => msg.offer?.id === offerId ? { ...msg, offer: { ...msg.offer!, status } } : msg)
         )
@@ -124,7 +128,8 @@ function MessagesContent() {
             message: status === "accepted"
               ? `Your offer of ${Number(offer.amount).toLocaleString()} was accepted!`
               : `Your offer of ${Number(offer.amount).toLocaleString()} was declined.`,
-            link: `/messages?c=${offer.seller_id}`
+            link: `/messages?c=${selectedId}`,
+            image_url: (offer.listing as any).image_urls[0]
           })
         }
 

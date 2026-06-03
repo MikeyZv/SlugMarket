@@ -30,6 +30,7 @@ export type Notification = {
   user_id: string;
   message: string;
   link?: string | null;
+  image_url: string
   read: boolean;
   created_at: string;
 };
