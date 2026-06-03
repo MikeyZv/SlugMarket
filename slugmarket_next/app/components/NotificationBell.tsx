@@ -28,7 +28,7 @@ export default function NotificationBell() {
 
         // adding new notificatons in real time
         const channel = supabase
-            .channel(`notifications:${user.id}:${Date.now()}`)
+            .channel(`notifications:${user.id}:${crypto.randomUUID()}`)
             .on(
                 "postgres_changes",
                 {
