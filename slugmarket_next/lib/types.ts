@@ -33,3 +33,36 @@ export type Notification = {
   read: boolean;
   created_at: string;
 };
+
+export type Profile = { username: string; avatar_url: string | null }
+
+export type Conversation = {
+  id: string
+  user1_id: string
+  user2_id: string
+  updated_at: string
+  last_message_body: string | null
+  last_message_at: string | null
+  user1: Profile
+  user2: Profile
+}
+
+export type OfferDetails = {
+  id: string
+  amount: number
+  status: "pending" | "accepted" | "declined" | "withdrawn"
+  seller_id: string
+  buyer_id: string
+  listing: { id: string; title: string; image_urls: string[] } | null
+}
+
+export type Message = {
+  id: string
+  conversation_id: string
+  sender_id: string
+  body: string
+  created_at: string
+  read_at: string | null
+  offer_id: string | null
+  offer?: OfferDetails | null
+}
