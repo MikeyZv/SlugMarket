@@ -1,49 +1,38 @@
-"use client"; // Required for useState, useRef, and event handlers
+"use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "./AuthProvider"
 import { revalidateListings } from "@/app/actions/listings"
+import { CONDITIONS, type ListingForm, type ListingImage, type LocalImage } from "@/lib/types"
+import { uploadLocals } from "@/lib/uploadImages"
+import ImageUploadGrid from "./ImageUploadGrid"
 
-// Fixed list of allowed condition values for a listing
-const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
-// Derive the union type from the array so it stays in sync automatically
-type Condition = typeof CONDITIONS[number]
+const inputCls = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
 
-// Shape of the form
-interface ListingForm {
-    title: string
-    price: string
-    description: string
-    condition: Condition | ''
-  }
-
-// local file 
-type LocalImage = { kind: "local"; file: File; url: string }
-// already on supabase
-type RemoteImage = { kind: "remote"; url: string }
-type ListingImage = LocalImage | RemoteImage
-
-// Props for the ProductListingForm component. It supports both "create" and "edit" modes, with optional initial values for editing an existing listing.
-export type ProductListingFormProps = {
-    mode: "create" | "edit";
-    listingId?: string;
-    initialForm?: ListingForm;
-    initialImageUrls?: string[];
+function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
+    return (
+        <div>
+            <label htmlFor={htmlFor} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+            {children}
+        </div>
+    )
 }
 
-// This component renders a form for creating or editing a product listing. 
-// It handles form state, image uploads, and submission logic. 
-// It also checks for user authentication and redirects to sign in if necessary.
-export default function ProductListingForm({ mode, listingId, initialForm, initialImageUrls = [],}: ProductListingFormProps) {
+export type ProductListingFormProps = {
+    mode: "create" | "edit"
+    listingId?: string
+    initialForm?: ListingForm
+    initialImageUrls?: string[]
+}
+
+export default function ProductListingForm({ mode, listingId, initialForm, initialImageUrls = [] }: ProductListingFormProps) {
     const { user, loading } = useAuth()
     const router = useRouter()
 
     useEffect(() => {
-        if (!loading && !user) {
-          router.replace("/signin")
-        }
+        if (!loading && !user) router.replace("/signin")
     }, [loading, user, router])
 
     const [form, setForm] = useState<ListingForm>({
@@ -52,299 +41,98 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
         description: initialForm?.description ?? "",
         condition: initialForm?.condition ?? "",
     })
-
-    const imageSet: ListingImage[] = initialImageUrls?.map((url) => ({ kind: "remote", url})) ?? []
-    const [images, setImages] = useState<ListingImage[]>(imageSet)
-
-    // Object URL for the selected image, used to show a local preview before upload
-    //const [preview, setPreview] = useState<string[] | null>(null)
-    // Prevents double-submission and disables the submit button while the request is in flight
+    const [images, setImages] = useState<ListingImage[]>(
+        initialImageUrls.map((url) => ({ kind: "remote", url }))
+    )
     const [loadingSubmit, setLoadingSubmit] = useState(false)
-    // Holds any error message surfaced to the user
     const [error, setError] = useState<string | null>(null)
-    // Ref to the hidden <input type="file"> so the styled drop-zone div can trigger it
-    const fileInputRef = useRef<HTMLInputElement>(null)
 
-    // Generic change handler shared by text inputs, textarea, and select.
-    // Uses the element's `name` attribute as the form key, so no per-field handler is needed.
-    function handleChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    // Stores the selected File object in form state and generates a temporary
-    // object URL so the image can be previewed locally without uploading first.
-    function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const files = Array.from(e.target.files ?? []);
-        if (files.length === 0) return;
-
-        const next: LocalImage[] = files.map((file) => ({
-            kind: "local",
-            file,
-            url: URL.createObjectURL(file),
-        }));
-
-        setImages((prev) => [...prev, ...next]);
-        // important: reset so selecting the same file again triggers onChange
-        e.target.value = "";
+    function addImages(files: File[]) {
+        const next: LocalImage[] = files.map((file) => ({ kind: "local", file, url: URL.createObjectURL(file) }))
+        setImages((prev) => [...prev, ...next])
     }
 
-    // Removes an image from the form state by index. If it's a local file, also revokes the object URL to avoid memory leaks.
     function removeImage(index: number) {
         setImages((prev) => {
-        const removed = prev[index];
-        if (removed?.kind === "local") URL.revokeObjectURL(removed.url) // avoid mem leaks
-
-        const copy = prev.slice();
-        copy.splice(index, 1);
-
-        return copy;
-        });
-    }
-    
-    // Helper function to upload local image files to Supabase storage and return their public URLs. 
-    // It generates unique file names using the user ID and a timestamp.
-    async function uploadLocals(files: File[], userId: string) {
-        if (files.length === 0) return []
-
-        const uploads = await Promise.all(
-            files.map(async (file) => {
-                const ext = file.name.split('.').pop()
-                const fileName = `${userId}/${Date.now()}-${crypto.randomUUID()}.${ext}`
-                const { error: uploadError } = await supabase.storage
-                    .from("listing-images")
-                    .upload(fileName, file);
-                if (uploadError) throw new Error(uploadError.message)
-                const { data: { publicUrl } } = supabase.storage.from("listing-images").getPublicUrl(fileName)
-
-                return publicUrl
-            })
-        )
-
-        return uploads
+            const removed = prev[index]
+            if (removed?.kind === "local") URL.revokeObjectURL(removed.url)
+            const copy = prev.slice()
+            copy.splice(index, 1)
+            return copy
+        })
     }
 
-    // Main form submission handler. 
-    // It validates the form, uploads any new local images, and then either creates a new listing or updates an existing one in the database. 
-    // It also handles error states and redirects to the appropriate page on success.
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        if (!user) {
-            router.replace("/signin")
-            return
-        }
-
-        if (images.length === 0) {
-            setError("Please add at least one photo")
-            return
-        }
-
-        if (mode === "edit" && !listingId) {
-            setError("Missing listing id")
-            return
-        }
+        if (!user) { router.replace("/signin"); return }
+        if (images.length === 0) { setError("Please add at least one photo"); return }
+        if (mode === "edit" && !listingId) { setError("Missing listing id"); return }
 
         setLoadingSubmit(true)
         setError(null)
 
         try {
-            const remoteUrls = images.filter((img) => img.kind === "remote")
-                                     .map((img) => img.url)
-            const localFiles = images.filter((img) => img.kind === "local")
-                                     .map((img) => img.file)
-
-            const newUrls = await uploadLocals(localFiles, user.id)
-            const image_urls = [...remoteUrls, ...newUrls]
-
-            const row = {
-                title: form.title,
-                price: parseFloat(form.price),
-                description: form.description,
-                condition: form.condition,
-                image_urls
-            }
+            const remoteUrls = images.filter((img) => img.kind === "remote").map((img) => img.url)
+            const localFiles = images.flatMap((img): File[] => img.kind === "local" ? [(img as LocalImage).file] : [])
+            const image_urls = [...remoteUrls, ...await uploadLocals(localFiles, user.id)]
+            const row = { title: form.title, price: parseFloat(form.price), description: form.description, condition: form.condition, image_urls }
 
             if (mode === "create") {
                 const { data: inserted, error: insertError } = await supabase
-                    .from("product_listings")
-                    .insert({ ...row, seller_id: user.id })
-                    .select("id")
-                    .single()
-
+                    .from("product_listings").insert({ ...row, seller_id: user.id }).select("id").single()
                 if (insertError) throw new Error(insertError.message)
                 await revalidateListings()
                 router.push(`/products/${inserted.id}`)
             } else {
                 const { error: updateError } = await supabase
-                    .from("product_listings")
-                    .update(row)
-                    .eq("id", listingId)
-                    .eq("seller_id", user.id)
-
+                    .from("product_listings").update(row).eq("id", listingId).eq("seller_id", user.id)
                 if (updateError) throw new Error(updateError.message)
                 await revalidateListings()
                 router.push(`/products/${listingId}`)
             }
         } catch (err: unknown) {
-            // Narrow the unknown error to extract a human-readable message
-            const message = err instanceof Error ? err.message : 'Something went wrong.'
-            console.error('Listing insert error:', message)
-            setError(message)
+            setError(err instanceof Error ? err.message : "Something went wrong.")
         } finally {
-            // Always re-enable the submit button regardless of success or failure
             setLoadingSubmit(false)
         }
     }
-        
-          
-    if (loading || !user) {
-        return null
-    }
+
+    if (loading || !user) return null
 
     const heading = mode === "create" ? "Post a Listing" : "Edit Listing"
-    const subtitle = mode === "create"
-        ? "Fill in the details about what you're selling."
-        : "Update your listing details."
-    const submitLabel =
-        mode === "create"
-            ? loadingSubmit
-                ? "Posting..."
-                : "Post Listing"
-            : loadingSubmit
-                ? "Saving..."
-                : "Save changes"
+    const subtitle = mode === "create" ? "Fill in the details about what you're selling." : "Update your listing details."
+    const submitLabel = mode === "create" ? (loadingSubmit ? "Posting..." : "Post Listing") : (loadingSubmit ? "Saving..." : "Save changes")
 
     return (
         <main className="max-w-2xl mx-auto px-6 py-12">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{heading}</h1>
             <p className="text-gray-500 mb-8">{subtitle}</p>
-
             <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Title */}
-                <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                        Title
-                    </label>
-                    <input
-                        id="title"
-                        name="title"
-                        type="text"
-                        required
-                        value={form.title}
-                        onChange={handleChange}
-                        placeholder="e.g. Calculus Textbook 9th Edition"
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                    />
-                </div>
-
-                {/* Price */}
-                <div>
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                        Price
-                    </label>
+                <Field label="Title" htmlFor="title">
+                    <input id="title" name="title" type="text" required value={form.title} onChange={handleChange} placeholder="e.g. Calculus Textbook 9th Edition" className={inputCls} />
+                </Field>
+                <Field label="Price" htmlFor="price">
                     <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">
-                        $
-                        </span>
-                        <input
-                        id="price"
-                        name="price"
-                        type="number"
-                        required
-                        min="0"
-                        step="0.01"
-                        value={form.price}
-                        onChange={handleChange}
-                        placeholder="0.00"
-                        className="w-full border border-gray-300 rounded-lg pl-8 pr-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                        />
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">$</span>
+                        <input id="price" name="price" type="number" required min="0" step="0.01" value={form.price} onChange={handleChange} placeholder="0.00" className={`${inputCls} pl-8`} />
                     </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                </label>
-                <textarea
-                    id="description"
-                    name="description"
-                    required
-                    rows={4}
-                    value={form.description}
-                    onChange={handleChange}
-                    placeholder="Describe your item — include any relevant details like edition, size, color, etc."
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none"
-                />
-                </div>
-                
-                {/* Condition */}
-                <div>
-                    <label htmlFor="condition" className="block text-sm font-medium text-gray-700 mb-1">
-                        Condition
-                    </label>
-                    <select
-                        id="condition"
-                        name="condition"
-                        required
-                        value={form.condition}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-white"
-                    >
-                        <option value="" disabled>
-                            Select a condition…
-                        </option>
-                        {CONDITIONS.map((c) => (
-                            <option key={c} value={c}>
-                                {c}
-                            </option>
-                        ))}
+                </Field>
+                <Field label="Description" htmlFor="description">
+                    <textarea id="description" name="description" required rows={4} value={form.description} onChange={handleChange} placeholder="Describe your item — include any relevant details like edition, size, color, etc." className={`${inputCls} resize-none`} />
+                </Field>
+                <Field label="Condition" htmlFor="condition">
+                    <select id="condition" name="condition" required value={form.condition} onChange={handleChange} className={`${inputCls} bg-white`}>
+                        <option value="" disabled>Select a condition…</option>
+                        {CONDITIONS.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
-                </div>
-
-                {/* Image Upload */}
-                <div className="grid grid-cols-3 gap-3">
-                    {images.length > 0 && images.map((img, i) => (
-                        <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                            <img src={img.url} alt={`Photo ${i + 1}`} className="h-full w-full object-cover" />
-                            <button
-                                type="button"
-                                onClick={() => removeImage(i)}
-                                className="absolute right-2 top-2 h-7 w-7 rounded-full bg-white/90 shadow grid place-items-center"
-                            >
-                                x
-                            </button>
-                        </div>
-                    ))}
-
-                    {images.length < 9 && (
-                        <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-10 text-center hover:border-yellow-400 transition-colors place-items-center"
-                        >
-                        <span className="text-gray-400 text-sm">Add photo</span>
-                        </button>
-                    )}
-
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageChange}
-                        className="hidden"
-                    />
-                </div>
-
-                {/* Submit */}
+                </Field>
+                <ImageUploadGrid images={images} onAdd={addImages} onRemove={removeImage} />
                 {error && <p className="text-red-500 text-sm">{error}</p>}
-                <button
-                    type="submit"
-                    disabled={loadingSubmit}
-                    className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base"
-                >
+                <button type="submit" disabled={loadingSubmit} className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base">
                     {submitLabel}
                 </button>
             </form>
