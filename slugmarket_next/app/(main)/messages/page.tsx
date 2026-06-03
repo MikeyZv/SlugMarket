@@ -113,10 +113,21 @@ function MessagesContent() {
     }
 
     async function handleOfferStatusChange(offerId: string, status: "accepted" | "declined") {
-        await supabase.from("offers").update({ status, updated_at: new Date().toISOString() }).eq("id", offerId)
+        const {data: offer} = await supabase.from("offers").update({ status, updated_at: new Date().toISOString() }).eq("id", offerId).select("buyer_id, seller_id, amount").single()
         setMessages((prev) =>
             prev.map((msg) => msg.offer?.id === offerId ? { ...msg, offer: { ...msg.offer!, status } } : msg)
         )
+
+        if (offer) {
+          await supabase.from("notifications").insert({
+            user_id: offer.buyer_id,
+            message: status === "accepted"
+              ? `Your offer of ${Number(offer.amount).toLocaleString()} was accepted!`
+              : `Your offer of ${Number(offer.amount).toLocaleString()} was declined.`,
+            link: `/messages?c=${offer.seller_id}`
+          })
+        }
+
     }
 
     function handleSelectConvo(id: string) {

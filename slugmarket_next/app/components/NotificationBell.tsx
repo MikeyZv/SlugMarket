@@ -67,8 +67,9 @@ export default function NotificationBell() {
                 )}
             </button>
 
+            {/* Dropdown popup */}
             {open && (
-                <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 mt-3 w-72 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
                     {notifications.length === 0
                         ? <p className="p-4 text-sm text-gray-500">No notifications</p>
                         : notifications.map((n) => 

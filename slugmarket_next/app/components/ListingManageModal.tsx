@@ -27,6 +27,7 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
     const [selectedBuyer, setSelectedBuyer] = useState<Profile | null>(null)
     const [showSuggestions, setShowSuggestions] = useState(false)
     const suggestionRef = useRef<HTMLDivElement>(null)
+    const [bookmarkCount, setBookmarkCount] = useState<number | null>(null)
 
     const myUsername = user?.user_metadata?.username
 
@@ -67,6 +68,14 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
+    useEffect(() => {
+        supabase
+            .from("bookmarks")
+            .select("*", { count: "exact", head: true })
+            .eq("product_id", listing.id)
+            .then(({ count }) => setBookmarkCount(count))
+    }, [listing.id])
+
     async function handleConfirmSale() {
         if (!selectedBuyer?.id) {
             setError("Please select a buyer from the list.")
@@ -87,6 +96,13 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
             setError(updateError.message)
             return
         }
+
+        await supabase
+            .from("notifications")
+            .insert({
+                user_id: selectedBuyer.id,
+                message: `Your purchase of "${listing.title} was confirmed! Give @${myUsername} a review.`,
+            })
 
         onClose()
         router.refresh()
@@ -149,6 +165,12 @@ export default function ListingManageModal({ listing, onClose }: ListingManageMo
                                         Sold
                                     </span>
                                 )}
+                                {bookmarkCount !== null && (
+                                    <span className="text-xs text-gray-500">
+                                        🔖 {bookmarkCount}
+                                    </span>
+                                )}
+
                             </div>
                         </div>
                     </div>

@@ -85,6 +85,14 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                 });
             if (msgError) throw msgError;
 
+            await supabase
+                .from("notifications")
+                .insert({
+                    user_id: sellerId,
+                    message: `New offer of ${Number(offerAmount)}`,
+                    link: `/messages?c=${user.id}`
+                })
+            
             setSubmitted(true);
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");

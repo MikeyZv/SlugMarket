@@ -4,6 +4,7 @@ import { type RefObject } from "react"
 import type { Conversation, Message } from "@/lib/types"
 import { formatTime } from "@/lib/utils"
 import OfferCard from "./OfferCard"
+import Link from "next/link"
 
 type Props = {
     selected: Conversation
@@ -25,7 +26,12 @@ export default function MessageThread({ selected, messages, userId, onBack, bott
         <>
             <div className="px-5 py-4 border-b border-gray-200 flex items-center gap-3">
                 <button type="button" onClick={onBack} className="min-[770px]:hidden text-blue-600 text-sm font-medium">← Back</button>
-                <span className="font-semibold text-gray-900">@{otherUser.username}</span>
+                <Link
+                    href={`/${otherUser.username}`}
+                    className="font-semibold text-gray-900"
+                >
+                    @{otherUser.username}
+                </Link>
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
