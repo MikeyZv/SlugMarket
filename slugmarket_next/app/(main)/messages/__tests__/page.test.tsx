@@ -26,8 +26,10 @@ const mockMsgsUpdate = vi.hoisted(() => vi.fn(() => ({ eq: mockMsgsUpdateEq })))
 // Messages insert
 const mockMsgsInsert = vi.hoisted(() => vi.fn());
 
-// Offers update chain: .from("offers").update().eq()
-const mockOffersEq = vi.hoisted(() => vi.fn());
+// Offers update chain: .from("offers").update().eq().select().single()
+const mockOffersSingle = vi.hoisted(() => vi.fn());
+const mockOffersSelect = vi.hoisted(() => vi.fn(() => ({ single: mockOffersSingle })));
+const mockOffersEq = vi.hoisted(() => vi.fn(() => ({ select: mockOffersSelect })));
 const mockOffersUpdate = vi.hoisted(() => vi.fn(() => ({ eq: mockOffersEq })));
 
 // Routes from() calls by table name
@@ -158,7 +160,7 @@ describe("MessagesPage", () => {
     mockMsgsOrder.mockResolvedValue({ data: [mockMessage] });
     mockMsgsIs.mockResolvedValue({});
     mockMsgsInsert.mockResolvedValue({});
-    mockOffersEq.mockResolvedValue({});
+    mockOffersSingle.mockResolvedValue({ data: null });
     mockOn.mockReturnValue(mockChannelObj);
     mockSubscribe.mockReturnValue(mockChannelObj);
   });

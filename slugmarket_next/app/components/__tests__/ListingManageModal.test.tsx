@@ -46,6 +46,12 @@ vi.mock("@/lib/supabase", () => ({
       if (table === "profiles") {
         return { select: () => ({ ilike: () => ({ limit: mockLimit }) }) };
       }
+      if (table === "bookmarks") {
+        return { select: () => ({ eq: () => Promise.resolve({ count: null }) }) };
+      }
+      if (table === "notifications") {
+        return { insert: () => Promise.resolve({}) };
+      }
       return { update: mockUpdate };
     },
   },
