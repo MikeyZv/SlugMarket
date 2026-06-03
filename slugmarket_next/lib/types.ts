@@ -53,6 +53,7 @@ export type OfferDetails = {
   status: "pending" | "accepted" | "declined" | "withdrawn"
   seller_id: string
   buyer_id: string
+  created_at: string
   listing: { id: string; title: string; image_urls: string[] } | null
 }
 

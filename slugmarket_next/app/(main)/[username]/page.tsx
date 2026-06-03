@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import { fetchProductsBySellerId, fetchSoldListingsBySellerId } from "@/lib/fetchProducts";
 import ProfileTabs from "../../components/ProfileTabs";
 import AvatarUpload from "../../components/AvatarUpload";
+import BioEditor from "../../components/BioEditor";
+import CollegeSelector from "../../components/CollegeSelector";
 
 // ProfilePage component is responsible for rendering the user's profile page.
 // It retrieves the username from the URL parameters, looks up the user's profile information from the database, and fetches their active and sold listings.
@@ -17,7 +19,7 @@ export default async function ProfilePage({
   // Look up the user's ID from the profiles table
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, avatar_url")
+    .select("id, avatar_url, bio, college")
     .eq("username", username)
     .single();
 
@@ -57,6 +59,8 @@ export default async function ProfilePage({
         <div>
           <h1 className="text-2xl font-bold text-gray-900">@{username}</h1>
           <p className="text-gray-500 text-sm mt-1">UCSC Student</p>
+          <CollegeSelector profileId={profile?.id ?? ""} initialCollege={profile?.college ?? null} />
+          <BioEditor profileId={profile?.id ?? ""} initialBio={profile?.bio ?? null} />
         </div>
       </div>
 

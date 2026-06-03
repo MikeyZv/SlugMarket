@@ -57,7 +57,7 @@ function MessagesContent() {
                 .from("messages")
                 .select(`
                     id, conversation_id, sender_id, body, created_at, read_at, offer_id,
-                    offer:offers(id, amount, status, seller_id, buyer_id, listing:product_listings(id, title, image_urls))
+                    offer:offers(id, amount, status, seller_id, buyer_id, created_at, listing:product_listings(id, title, image_urls))
                 `)
                 .eq("conversation_id", selectedId)
                 .order("created_at", { ascending: true })
