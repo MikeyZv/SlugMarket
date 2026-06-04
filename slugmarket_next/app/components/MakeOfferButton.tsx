@@ -114,7 +114,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
         <>
             <button
                 onClick={() => { if (!user) { router.push("/signin"); return; } setOpen(true); }}
-                className="w-full rounded-xl bg-[#F5C518] py-3 md:py-4 text-lg md:text-2xl font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047]"
+                className="w-full rounded-xl bg-[#F5C518] py-3 md:py-4 text-lg md:text-2xl font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] cursor-pointer"
             >
                 Make Offer
             </button>
@@ -131,7 +131,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                                 </p>
                                 <button
                                     onClick={handleClose}
-                                    className="mt-2 w-full rounded-xl bg-[#0F2044] py-3 text-lg font-semibold text-white hover:bg-[#162d5a] transition"
+                                    className="mt-2 w-full rounded-xl bg-[#0F2044] py-3 text-lg font-semibold text-white hover:bg-[#162d5a] transition cursor-pointer"
                                 >
                                     Done
                                 </button>
@@ -140,7 +140,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-2xl font-bold text-gray-900">Make an Offer</h2>
-                                    <button type="button" onClick={handleClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+                                    <button type="button" onClick={handleClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none cursor-pointer">&times;</button>
                                 </div>
 
                                 <p className="text-gray-500 text-sm">
@@ -168,7 +168,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] hover:bg-[#fde047] transition disabled:opacity-50"
+                                    className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] hover:bg-[#fde047] transition disabled:opacity-50 cursor-pointer"
                                 >
                                     {loading ? "Sending…" : "Send Offer"}
                                 </button>

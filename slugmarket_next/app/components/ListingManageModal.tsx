@@ -74,7 +74,7 @@ export default function ListingManageModal({ listing, onClose }: { listing: List
             <div className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 className="text-lg font-semibold text-gray-900">{confirmingSold ? "Confirm Sale" : "Manage Listing"}</h2>
-                    <button type="button" onClick={onClose} className="h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition text-sm">✕</button>
+                    <button type="button" onClick={onClose} className="h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition text-sm cursor-pointer">✕</button>
                 </div>
                 <div className="px-6 py-5 grid grid-cols-[80px_1fr] gap-x-4">
                     <Image src={listing.image_urls[0]} alt={listing.title} width={80} height={80} className="rounded-xl object-cover w-20 h-20 row-span-3 self-center" />
@@ -111,21 +111,21 @@ export default function ListingManageModal({ listing, onClose }: { listing: List
                             </div>
                         )}
                         {error && <p className="text-sm text-red-500">{error}</p>}
-                        <button type="button" onClick={handleConfirmSale} disabled={saving || !selectedBuyer} className={`${btn} bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed`}>
+                        <button type="button" onClick={handleConfirmSale} disabled={saving || !selectedBuyer} className={`${btn} bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer`}>
                             {saving ? "Saving..." : selectedBuyer ? `Confirm sale to @${selectedBuyer.username}` : "Confirm sale"}
                         </button>
-                        <button type="button" onClick={cancelConfirm} className={`${btn} border border-gray-200 font-medium text-gray-600 hover:bg-gray-50`}>Cancel</button>
+                        <button type="button" onClick={cancelConfirm} className={`${btn} border border-gray-200 font-medium text-gray-600 hover:bg-gray-50 cursor-pointer`}>Cancel</button>
                     </div>
                 ) : (
                     <div className={section}>
                         <Link href={`/products/${listing.id}`} className="flex items-center justify-center gap-1.5 w-full rounded-xl border border-gray-200 bg-gray-50 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 transition">View listing <span className="text-gray-400">↗</span></Link>
-                        <button type="button" disabled={listing.sold} onClick={() => !listing.sold && setConfirmingSold(true)} className={`${btn} border-2 border-emerald-500 bg-white text-emerald-600 hover:bg-emerald-50 disabled:opacity-40 disabled:cursor-not-allowed`}>
+                        <button type="button" disabled={listing.sold} onClick={() => !listing.sold && setConfirmingSold(true)} className={`${btn} border-2 border-emerald-500 bg-white text-emerald-600 hover:bg-emerald-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer`}>
                             {listing.sold ? "Already sold" : "Mark as sold"}
                         </button>
                         <Link href={`/products/edit/${listing.id}`} className="flex items-center justify-center w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Edit listing</Link>
                         {error && <p className="text-sm text-red-500 text-center">{error}</p>}
                         <DeleteButton productId={listing.id} sellerId={listing.seller_id} imageUrls={listing.image_urls}
-                            className="w-full rounded-xl border-2 border-red-400 bg-white py-3 text-sm font-semibold text-red-500 transition hover:bg-red-50" />
+                            className="w-full rounded-xl border-2 border-red-400 bg-white py-3 text-sm font-semibold text-red-500 transition hover:bg-red-50 cursor-pointer" />
                     </div>
                 )}
             </div>

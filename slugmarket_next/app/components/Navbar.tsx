@@ -79,6 +79,20 @@ export default function Navbar() {
           <div className="hidden min-[945px]:block w-64">
             <NavSearchBar />
           </div>
+          
+          {/* Mobile-only top bar right side */}
+          {user && (
+            <div className="flex items-center gap-5 min-[770px]:hidden">
+              <NotificationBell />
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex items-center text-gray-700 hover:text-blue-600 cursor-pointer"
+              >
+                <LogOut size={24} strokeWidth={2} />
+              </button>
+            </div>
+          )}
 
           {/* Desktop nav links — hidden on mobile */}
           <div className="hidden min-[770px]:flex items-center gap-8">
@@ -132,17 +146,6 @@ export default function Navbar() {
             );
           })}
 
-          {user && <NotificationBell />}
-
-          {user && (
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="flex flex-col items-center px-3 py-1 text-gray-700 hover:text-blue-600 cursor-pointer"
-            >
-              <LogOut size={24} strokeWidth={2} />
-            </button>
-          )}
         </div>
       </nav>
     </>
