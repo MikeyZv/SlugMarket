@@ -94,7 +94,7 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
         {isOwner && (
           <button
             onClick={openModal}
-            className="shrink-0 text-gray-400 hover:text-[#0F2044] transition mt-0.5"
+            className="shrink-0 text-gray-400 hover:text-[#0F2044] transition mt-0.5 cursor-pointer"
             title="Edit profile"
           >
             <Pencil size={14} />
@@ -110,7 +110,7 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-[#0F2044]">Edit your profile</h2>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition">
+              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition cursor-pointer">
                 <X size={20} />
               </button>
             </div>
@@ -123,7 +123,7 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
                   <button
                     type="button"
                     onClick={() => setDropdownOpen((v) => !v)}
-                    className="w-full flex items-center justify-between rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-[#0F2044] focus:outline-none transition bg-white"
+                    className="w-full flex items-center justify-between rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-[#0F2044] focus:outline-none transition bg-white cursor-pointer"
                   >
                     <span className={draftCollege ? "text-gray-800" : "text-gray-400"}>
                       {draftCollege ? formatCollege(draftCollege) : "Select your college…"}
@@ -140,7 +140,7 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
                         <button
                           type="button"
                           onClick={() => { setDraftCollege(""); setDropdownOpen(false); }}
-                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-50 transition"
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-50 transition cursor-pointer"
                         >
                           <span className="flex-1 text-left">None</span>
                         </button>
@@ -150,7 +150,7 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
                           <button
                             type="button"
                             onClick={() => { setDraftCollege(c); setDropdownOpen(false); }}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
                           >
                             <span className="flex-1 text-left">{formatCollege(c)}</span>
                             {draftCollege === c && <Check size={14} className="text-[#0F2044] shrink-0" />}
@@ -180,14 +180,14 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
             <div className="flex justify-end gap-3 mt-5">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-5 py-2 rounded-xl bg-[#F5C518] text-[#0F2044] text-sm font-semibold hover:bg-[#fde047] transition disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-[#F5C518] text-[#0F2044] text-sm font-semibold hover:bg-[#fde047] transition disabled:opacity-50 cursor-pointer"
               >
                 {saving ? "Saving…" : "Save"}
               </button>

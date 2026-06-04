@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { ChevronDown, Check } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "./AuthProvider"
 import { revalidateListings } from "@/app/actions/listings"
@@ -9,7 +10,7 @@ import { CONDITIONS, type ListingForm, type ListingImage, type LocalImage } from
 import { uploadLocals } from "@/lib/uploadImages"
 import ImageUploadGrid from "./ImageUploadGrid"
 
-const inputCls = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+const inputCls = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent"
 
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
     return (
@@ -46,8 +47,20 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
     )
     const [loadingSubmit, setLoadingSubmit] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [conditionOpen, setConditionOpen] = useState(false)
+    const conditionRef = useRef<HTMLDivElement>(null)
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (conditionRef.current && !conditionRef.current.contains(e.target as Node)) {
+                setConditionOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
@@ -124,15 +137,41 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
                 <Field label="Description" htmlFor="description">
                     <textarea id="description" name="description" required rows={4} value={form.description} onChange={handleChange} placeholder="Describe your item — include any relevant details like edition, size, color, etc." className={`${inputCls} resize-none`} />
                 </Field>
-                <Field label="Condition" htmlFor="condition">
-                    <select id="condition" name="condition" required value={form.condition} onChange={handleChange} className={`${inputCls} bg-white`}>
-                        <option value="" disabled>Select a condition…</option>
-                        {CONDITIONS.map((c) => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                </Field>
+                <div>
+                    <label id="condition-label" className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                    <div className="relative" ref={conditionRef}>
+                        <button
+                            type="button"
+                            aria-labelledby="condition-label"
+                            onClick={() => setConditionOpen((v) => !v)}
+                            className="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
+                        >
+                            <span className={form.condition ? "text-gray-900" : "text-gray-400"}>
+                                {form.condition || "Select a condition…"}
+                            </span>
+                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${conditionOpen ? "rotate-180" : ""}`} />
+                        </button>
+                        {conditionOpen && (
+                            <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                {CONDITIONS.map((c) => (
+                                    <li key={c}>
+                                        <button
+                                            type="button"
+                                            onClick={() => { setForm((prev) => ({ ...prev, condition: c })); setConditionOpen(false) }}
+                                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
+                                        >
+                                            <span className="flex-1 text-left">{c}</span>
+                                            {form.condition === c && <Check size={14} className="text-[#0F2044] shrink-0" />}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                </div>
                 <ImageUploadGrid images={images} onAdd={addImages} onRemove={removeImage} />
                 {error && <p className="text-red-500 text-sm">{error}</p>}
-                <button type="submit" disabled={loadingSubmit} className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base">
+                <button type="submit" disabled={loadingSubmit} className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base cursor-pointer">
                     {submitLabel}
                 </button>
             </form>

@@ -37,9 +37,6 @@ export default function ForgotPasswordPage() {
               <img src="/logo2.png" alt="SlugMarket" className="h-16 w-auto mx-auto mb-4" />
             </Link>
             <h1 className="text-3xl font-bold text-[#0F2044]">Reset your password</h1>
-            <p className="text-gray-500 mt-1">
-              Enter your email and we&apos;ll send you a reset link.
-            </p>
           </div>
 
           {sent ? (
@@ -75,7 +72,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] disabled:opacity-50 mt-1"
+                className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] disabled:opacity-50 mt-1 cursor-pointer"
               >
                 {loading ? "Sending…" : "Send reset link"}
               </button>

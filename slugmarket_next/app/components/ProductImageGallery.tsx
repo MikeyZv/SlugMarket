@@ -106,7 +106,7 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
           <button
             type="button"
             onClick={toggleBookmark}
-            className="rounded-full bg-white/90 p-3 shadow-md backdrop-blur-sm transition hover:scale-105"
+            className="rounded-full bg-white/90 p-3 shadow-md backdrop-blur-sm transition hover:scale-105 cursor-pointer"
             aria-label="Toggle bookmark"
           >
                         

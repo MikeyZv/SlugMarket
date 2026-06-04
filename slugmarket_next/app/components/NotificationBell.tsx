@@ -73,7 +73,7 @@ export default function NotificationBell() {
         <div className="relative" onMouseLeave={() => setOpen(false)}>
             <button
                 type="button"
-                className="relative flex flex-col items-center text-gray-700 hover:text-blue-600"
+                className="relative flex flex-col items-center text-gray-700 hover:text-blue-600 cursor-pointer"
                 onClick={() => setOpen((o) => !o)}
                 onMouseEnter={() => setOpen(true)}
             >

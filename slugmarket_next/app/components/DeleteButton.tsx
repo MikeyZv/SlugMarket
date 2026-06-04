@@ -58,7 +58,7 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
         <>
             <button
                 onClick={() => setShowModal(true)}
-                className={className ?? "w-full rounded-xl border-2 border-red-500 bg-white py-4 text-2xl font-semibold text-red-500 transition hover:bg-red-50"}
+                className={className ?? "w-full rounded-xl border-2 border-red-500 bg-white py-4 text-2xl font-semibold text-red-500 transition hover:bg-red-50 cursor-pointer"}
             >
                 Delete Listing
             </button>
@@ -74,14 +74,14 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
                             <button
                                 onClick={handleDelete}
                                 disabled={loading}
-                                className="w-full rounded-xl bg-red-500 py-3 text-lg font-semibold text-white transition hover:bg-red-600 disabled:opacity-50"
+                                className="w-full rounded-xl bg-red-500 py-3 text-lg font-semibold text-white transition hover:bg-red-600 disabled:opacity-50 cursor-pointer"
                             >
                                 {loading ? "Deleting..." : "Yes, delete it"}
                             </button>
                             <button
                                 onClick={() => setShowModal(false)}
                                 disabled={loading}
-                                className="w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+                                className="w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
                             >
                                 Cancel
                             </button>

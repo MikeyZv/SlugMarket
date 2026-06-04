@@ -104,7 +104,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex flex-col items-center text-gray-700 hover:text-blue-600"
+                className="flex flex-col items-center text-gray-700 hover:text-blue-600 cursor-pointer"
               >
                 <LogOut size={24} strokeWidth={2} />
               </button>
@@ -138,7 +138,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="flex flex-col items-center px-3 py-1 text-gray-700 hover:text-blue-600"
+              className="flex flex-col items-center px-3 py-1 text-gray-700 hover:text-blue-600 cursor-pointer"
             >
               <LogOut size={24} strokeWidth={2} />
             </button>

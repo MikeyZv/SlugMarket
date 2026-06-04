@@ -130,7 +130,7 @@ describe("ProductListingForm", () => {
       expect((screen.getByLabelText("Title") as HTMLInputElement).value).toBe("Old Title");
       expect((screen.getByLabelText("Price") as HTMLInputElement).value).toBe("25");
       expect((screen.getByLabelText("Description") as HTMLTextAreaElement).value).toBe("Old desc");
-      expect((screen.getByLabelText("Condition") as HTMLSelectElement).value).toBe("Good");
+      expect(screen.getByLabelText("Condition")).toHaveTextContent("Good");
     });
 
     it("pre-fills image grid with initialImageUrls", () => {
@@ -321,5 +321,6 @@ function fillForm(values: { title?: string; price?: string; description?: string
   fireEvent.change(screen.getByLabelText("Title"), { target: { value: title } });
   fireEvent.change(screen.getByLabelText("Price"), { target: { value: price } });
   fireEvent.change(screen.getByLabelText("Description"), { target: { value: description } });
-  fireEvent.change(screen.getByLabelText("Condition"), { target: { value: condition } });
+  fireEvent.click(screen.getByLabelText("Condition"));
+  fireEvent.click(screen.getByRole("button", { name: condition }));
 }

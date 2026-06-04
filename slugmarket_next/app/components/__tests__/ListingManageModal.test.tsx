@@ -47,7 +47,7 @@ vi.mock("@/lib/supabase", () => ({
         return { select: () => ({ ilike: () => ({ limit: mockLimit }) }) };
       }
       if (table === "bookmarks") {
-        return { select: () => ({ eq: () => Promise.resolve({ count: null }) }) };
+        return { select: () => ({ eq: () => ({ then: (cb: (v: { count: number | null }) => void) => cb({ count: null }) }) }) };
       }
       if (table === "notifications") {
         return { insert: () => Promise.resolve({}) };

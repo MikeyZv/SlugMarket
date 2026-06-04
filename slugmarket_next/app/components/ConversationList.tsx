@@ -26,7 +26,7 @@ export default function ConversationList({ conversations, selectedId, loadingCon
                         <button
                             key={convo.id}
                             onClick={() => onSelect(convo.id)}
-                            className={`w-full text-left px-4 py-4 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${selectedId === convo.id ? "bg-yellow-50 border-l-4 border-l-yellow-400" : ""}`}
+                            className={`w-full text-left px-4 py-4 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 cursor-pointer ${selectedId === convo.id ? "bg-yellow-50 border-l-4 border-l-yellow-400" : ""}`}
                         >
                             <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold flex-shrink-0 overflow-hidden">
                                 {other.avatar_url ? (

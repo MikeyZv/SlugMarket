@@ -26,7 +26,7 @@ export default function ImageUploadGrid({ images, onAdd, onRemove }: Props) {
                     <button
                         type="button"
                         onClick={() => onRemove(i)}
-                        className="absolute right-2 top-2 h-7 w-7 rounded-full bg-white/90 shadow grid place-items-center"
+                        className="absolute right-2 top-2 h-7 w-7 rounded-full bg-white/90 shadow grid place-items-center cursor-pointer"
                     >
                         x
                     </button>
