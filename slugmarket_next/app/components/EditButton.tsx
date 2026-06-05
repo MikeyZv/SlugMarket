@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
-import { supabase } from "@/lib/supabase"
 import { Pencil } from "lucide-react"
+import { useAuth } from "./AuthProvider"
 
 type EditButtonProps = {
     productId: string;
@@ -12,15 +11,9 @@ type EditButtonProps = {
 }
 
 export default function EditButton({ productId, sellerId, className }: EditButtonProps) {
-    const [isOwner, setIsOwner] = useState(false)
+    const { user } = useAuth()
 
-    useEffect(() => {
-        supabase.auth.getUser().then(({ data}) => {
-            if (data.user?.id === sellerId) setIsOwner(true)
-        })
-    }, [sellerId])
-
-    if (!isOwner) return null
+    if (user?.id !== sellerId) return null
 
     return (
         <Link

@@ -61,7 +61,21 @@ function MessagesContent() {
                 `)
                 .eq("conversation_id", selectedId)
                 .order("created_at", { ascending: true })
-            if (data) setMessages(data as unknown as Message[])
+            if (data) {
+                const msgs = data as unknown as Message[]
+                const expiredIds = msgs
+                    .filter(m => m.offer?.status === "pending" && Date.now() > new Date(m.offer.created_at).getTime() + 48 * 60 * 60 * 1000)
+                    .map(m => m.offer!.id)
+                if (expiredIds.length > 0) {
+                    await Promise.all([
+                        supabase.from("messages").update({ offer_id: null }).in("offer_id", expiredIds),
+                        supabase.from("offers").delete().in("id", expiredIds),
+                    ])
+                    setMessages(msgs.map(m => expiredIds.includes(m.offer?.id ?? "") ? { ...m, offer: null, offer_id: null } : m))
+                } else {
+                    setMessages(msgs)
+                }
+            }
             await supabase
                 .from("messages")
                 .update({ read_at: new Date().toISOString() })

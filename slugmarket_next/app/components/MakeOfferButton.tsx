@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+
+type OfferState = "checking" | "available" | "alreadyOffered";
 
 type Props = {
     listingPrice: number;
@@ -22,6 +24,33 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [offerState, setOfferState] = useState<OfferState>("checking");
+
+    // On mount, check whether this user has already made an offer on this listing.
+    // Expired offers are deleted from the DB, so any row that remains (pending,
+    // accepted, or declined) means they've already offered and can't offer again.
+    useEffect(() => {
+        if (!user) {
+            setOfferState("available");
+            return;
+        }
+        let active = true;
+        (async () => {
+            // Ignore offers older than 48h: they're expired and effectively gone,
+            // even if the cleanup/cron hasn't physically deleted the row yet.
+            const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+            const { data } = await supabase
+                .from("offers")
+                .select("id")
+                .eq("listing_id", listingId)
+                .eq("buyer_id", user.id)
+                .gt("created_at", cutoff)
+                .limit(1)
+                .maybeSingle();
+            if (active) setOfferState(data ? "alreadyOffered" : "available");
+        })();
+        return () => { active = false; };
+    }, [user, listingId]);
 
     // Don't show to the seller of this listing
     if (user?.id === sellerId) return null;
@@ -106,8 +135,9 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                     link: `/messages?c=${conversationId}`,
                     image_url: listingImageUrl
                 })
-            
+
             setSubmitted(true);
+            setOfferState("alreadyOffered");
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
         } finally {
@@ -124,12 +154,22 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
 
     return (
         <>
-            <button
-                onClick={() => { if (!user) { router.push("/signin"); return; } setOpen(true); }}
-                className="w-full rounded-xl bg-[#F5C518] py-3 md:py-4 text-lg md:text-2xl font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] cursor-pointer"
-            >
-                Make Offer
-            </button>
+            {offerState === "alreadyOffered" ? (
+                <button
+                    disabled
+                    className="w-full rounded-xl bg-gray-200 py-3 md:py-4 text-lg md:text-2xl font-semibold text-gray-500 cursor-not-allowed"
+                >
+                    Offer Sent
+                </button>
+            ) : (
+                <button
+                    onClick={() => { if (!user) { router.push("/signin"); return; } setOpen(true); }}
+                    disabled={offerState === "checking"}
+                    className="w-full rounded-xl bg-[#F5C518] py-3 md:py-4 text-lg md:text-2xl font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Make Offer
+                </button>
+            )}
 
             {open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">

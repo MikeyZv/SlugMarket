@@ -112,7 +112,7 @@ describe("ProductListingForm", () => {
   // --- Edit mode rendering ---
 
   describe("edit mode", () => {
-    const initialForm = { title: "Old Title", price: "25", description: "Old desc", condition: "Good" as const };
+    const initialForm = { title: "Old Title", price: "25", description: "Old desc", condition: "Good" as const, category: "Electronics" as const };
 
     it("renders 'Edit Listing' heading and subtitle", () => {
       render(<ProductListingForm mode="edit" listingId="listing-1" initialForm={initialForm} />);
