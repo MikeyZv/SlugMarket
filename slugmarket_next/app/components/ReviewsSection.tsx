@@ -101,7 +101,7 @@ export default function ReviewsSection({ profileId }: { profileId: string }) {
             <span className="text-yellow-500">⭐ {r.rating}</span>
           </div>
 
-          <p className="text-gray-700">{r.review_text}</p>
+          <p className="text-gray-700 break-words">{r.review_text}</p>
 
           <p className="text-xs text-gray-400 mt-1">
             {new Date(r.created_at).toLocaleDateString()}

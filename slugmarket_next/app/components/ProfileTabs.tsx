@@ -41,10 +41,10 @@ export default function ProfileTabs({ listings, soldListings, profileId, buyerUs
   return (
     <div>
       {/* Tab buttons */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex overflow-x-auto border-b border-gray-200 mb-6 scrollbar-none">
         <button
           onClick={() => setActiveTab("active")}
-          className={`px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
+          className={`shrink-0 px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
             activeTab === "active"
               ? "border-b-2 border-gray-900 text-gray-900"
               : "text-gray-400 hover:text-gray-600"
@@ -59,7 +59,7 @@ export default function ProfileTabs({ listings, soldListings, profileId, buyerUs
         </button>
         <button
           onClick={() => setActiveTab("sold")}
-          className={`px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
+          className={`shrink-0 px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
             activeTab === "sold"
               ? "border-b-2 border-gray-900 text-gray-900"
               : "text-gray-400 hover:text-gray-600"
@@ -74,7 +74,7 @@ export default function ProfileTabs({ listings, soldListings, profileId, buyerUs
         </button>
         <button
           onClick={() => setActiveTab("reviews")}
-          className={`px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
+          className={`shrink-0 px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
             activeTab === "reviews"
               ? "border-b-2 border-gray-900 text-gray-900"
               : "text-gray-400 hover:text-gray-600"
@@ -88,7 +88,7 @@ export default function ProfileTabs({ listings, soldListings, profileId, buyerUs
         {isOwnProfile && (
           <button
             onClick={handleBookmarksTab}
-            className={`min-[770px]:hidden px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
+            className={`shrink-0 min-[770px]:hidden px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
               activeTab === "bookmarks"
                 ? "border-b-2 border-gray-900 text-gray-900"
                 : "text-gray-400 hover:text-gray-600"
