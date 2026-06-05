@@ -7,11 +7,11 @@ import { Listing } from "@/lib/types";
 
 const CATEGORIES = [
   { label: "All Categories", value: "" },
-  { label: "Electronics", value: "electronics" },
-  { label: "Furniture", value: "furniture" },
-  { label: "Clothing", value: "clothing" },
-  { label: "Books", value: "books" },
-  { label: "Other", value: "other" },
+  { label: "Electronics", value: "Electronics" },
+  { label: "Furniture", value: "Furniture" },
+  { label: "Clothing", value: "Clothing" },
+  { label: "Books", value: "Books" },
+  { label: "Other", value: "Other" },
 ];
 
 const CONDITIONS = [
