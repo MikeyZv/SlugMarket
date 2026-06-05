@@ -1,11 +1,13 @@
 import { fetchBookmarkCount, fetchProductById, fetchOfferCount } from "@/lib/fetchProducts";
 import { supabase } from "@/lib/supabase";
+import { Suspense } from "react"
 import ProductImageGallery from "../../../components/ProductImageGallery"
 import DeleteButton from "../../../components/DeleteButton"
 import EditButton from "../../../components/EditButton"
 import MessageButton from "../../../components/MessageButton"
 import MakeOfferButton from "../../../components/MakeOfferButton"
 import ReviewsSection from "@/app/components/ReviewsSection";
+import LeaveReviewButton from "@/app/components/LeaveReviewButton";
 
 type ProductPageProps = {
     params: Promise<{
@@ -84,8 +86,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </span>
             </div>
 
+            {/* Review button that shows up only for confirmed buyer*/}
+            <Suspense fallback={null}>
+                <LeaveReviewButton
+                    listingId={product.id}
+                    sellerId={product.seller_id}
+                    sellerUsername={sellerUsername}
+                    listingTitle={product.title}
+                    buyerId={product.buyer_id}
+                    sold={product.sold}
+                />
+            </Suspense>
+
             <div className="flex flex-col gap-4">
-                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} listingImageUrl={product.image_urls[0]} sellerId={product.seller_id} />
+                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} listingImageUrl={product.image_urls[0]} sellerId={product.seller_id} sold={product.sold}/>
                 <MessageButton otherUserId={product.seller_id} />
             </div>
 

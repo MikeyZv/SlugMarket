@@ -69,6 +69,14 @@ export default function ReviewsSection({ profileId }: { profileId: string }) {
     }
 
     load();
+
+    function handleRefresh(e: Event) {
+      const { profileId: id } = (e as CustomEvent).detail
+      if (id === profileId) load()
+    }
+
+    window.addEventListener("review-submitted", handleRefresh)
+    return () => window.removeEventListener("review-submitted", handleRefresh)
   }, [profileId]);
 
   if (loading) {
@@ -103,7 +111,7 @@ export default function ReviewsSection({ profileId }: { profileId: string }) {
             <p className="text-xs text-gray-500 mt-1">
               Related listing:{" "}
               <a
-                href={`/listing/${r.listing_id}`}
+                href={`/products/${r.listing_id}`}
                 className="underline hover:text-gray-700"
               >
                 View

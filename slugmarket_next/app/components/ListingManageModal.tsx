@@ -7,6 +7,7 @@ import { Listing } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
 import DeleteButton from "./DeleteButton"
 import { useAuth } from "./AuthProvider"
+import { revalidateProduct } from "../actions/listings";
 
 type Profile = { id: string; username: string }
 
@@ -54,7 +55,14 @@ export default function ListingManageModal({ listing, onClose }: { listing: List
         const { error: err } = await supabase.from("product_listings").update({ sold: true, buyer_id: selectedBuyer.id }).eq("id", listing.id)
         setSaving(false)
         if (err) { setError(err.message); return }
-        await supabase.from("notifications").insert({ user_id: selectedBuyer.id, message: `Your purchase of "${listing.title} was confirmed! Give @${myUsername} a review.`, image_url: listing.image_urls[0] })
+        await supabase.from("notifications").insert({ 
+            user_id: selectedBuyer.id, 
+            message: `Your purchase of "${listing.title}" was confirmed! Give @${myUsername} a review.`, 
+            link: `/products/${listing.id}?review=true`,
+            image_url: listing.image_urls[0] })
+
+        // revalidate product id page
+        await revalidateProduct(listing.id)
         onClose(); router.refresh()
     }
 

@@ -7,3 +7,7 @@ import { revalidatePath } from 'next/cache'
 export async function revalidateListings() {
   revalidatePath('/')
 }
+
+export async function revalidateProduct(listingId: string) {
+  revalidatePath(`/products/${listingId}`)
+}

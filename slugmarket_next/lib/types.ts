@@ -72,3 +72,13 @@ export type Message = {
   offer_id: string | null
   offer?: OfferDetails | null
 }
+
+export type Review = {
+  review_id: string
+  reviewer_id: string
+  reviewed_user_id: string
+  listing_id: string
+  rating: number
+  review_text: string | null
+  created_at: string
+}
