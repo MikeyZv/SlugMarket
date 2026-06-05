@@ -45,6 +45,24 @@ export default async function ProfilePage({
       buyerUsernames[b.id] = b.username;
     }
   }
+
+  // Get average review rating for profile
+  // Fetch average rating for this user
+  let averageRating: number | null = null;
+
+  if (profile) {
+    const { data: ratingRows } = await supabase
+      .from("reviews")
+      .select("rating")
+      .eq("reviewed_user_id", profile.id);
+
+    if (ratingRows && ratingRows.length > 0) {
+      const sum = ratingRows.reduce((acc, r) => acc + r.rating, 0);
+      averageRating = sum / ratingRows.length;
+    }
+  }
+
+
  // Render the profile page with the user's listings and sold items
   return (
     <main className="w-full max-w-4xl mx-auto px-6 py-12">
@@ -57,10 +75,15 @@ export default async function ProfilePage({
         />
         <div>
           <h1 className="text-2xl font-bold text-gray-900">@{username}</h1>
+           {averageRating !== null && (
+            <p className="text-gray-700 font-medium">
+              ⭐ {averageRating.toFixed(1)}
+            </p>
+          )}
+
           <EditProfile profileId={profile?.id ?? ""} initialBio={profile?.bio ?? null} initialCollege={profile?.college ?? null} />
         </div>
       </div>
-
       {!profile ? (
         <p className="text-gray-400 italic">User not found.</p>
       ) : (
