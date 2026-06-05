@@ -6,6 +6,7 @@ import { Listing } from "@/lib/types";
 import { useAuth } from "./AuthProvider";
 import { fetchBookmarkedProducts } from "@/lib/fetchProducts";
 import ListingManageModal from "./ListingManageModal"
+import ReviewsSection from "./ReviewsSection";
 
 type Props = {
   listings: Listing[];
@@ -20,7 +21,7 @@ type Props = {
 export default function ProfileTabs({ listings, soldListings, profileId, buyerUsernames = {} }: Props) {
   const { user } = useAuth();
   const isOwnProfile = !!user && user.id === profileId;
-  const [activeTab, setActiveTab] = useState<"active" | "sold" | "bookmarks">("active");
+  const [activeTab, setActiveTab] = useState<"active" | "sold" | "bookmarks" | "reviews">("active");
   const [bookmarks, setBookmarks] = useState<Listing[]>([]);
   const [bookmarksLoaded, setBookmarksLoaded] = useState(false);
   const [bookmarksLoading, setBookmarksLoading] = useState(false);
@@ -71,6 +72,17 @@ export default function ProfileTabs({ listings, soldListings, profileId, buyerUs
             </span>
           )}
         </button>
+        <button
+          onClick={() => setActiveTab("reviews")}
+          className={`px-6 py-2 text-sm font-medium transition-colors cursor-pointer ${
+            activeTab === "reviews"
+              ? "border-b-2 border-gray-900 text-gray-900"
+              : "text-gray-400 hover:text-gray-600"
+          }`}
+        >
+          Reviews
+        </button>
+
 
         {/* Saved tab — mobile only, own profile only */}
         {isOwnProfile && (
@@ -114,6 +126,8 @@ export default function ProfileTabs({ listings, soldListings, profileId, buyerUs
             ))}
           </div>
         )
+      ) : activeTab === "reviews" ? (
+          <ReviewsSection profileId={profileId} />
       ) : soldListings.length === 0 ? (
           <p className="text-gray-400 italic">No sold listings.</p>
       ) : (
