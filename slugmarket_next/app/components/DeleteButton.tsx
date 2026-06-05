@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
 import { revalidateListings } from "@/app/actions/listings";
+import { Trash2 } from "lucide-react";
 
 type DeleteButtonProps = {
     productId: string;
@@ -58,8 +59,9 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
         <>
             <button
                 onClick={() => setShowModal(true)}
-                className={className ?? "w-full rounded-xl border-2 border-red-500 bg-white py-4 text-2xl font-semibold text-red-500 transition hover:bg-red-50 cursor-pointer"}
+                className={className ?? "flex items-center justify-center gap-2 w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-500 transition hover:border-red-300 hover:text-red-500 cursor-pointer"}
             >
+                <Trash2 size={16} />
                 Delete Listing
             </button>
 

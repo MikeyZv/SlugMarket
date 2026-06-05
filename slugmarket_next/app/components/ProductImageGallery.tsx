@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bookmark } from "lucide-react"
+import { Bookmark, ChevronLeft, ChevronRight } from "lucide-react"
 import { useAuth } from "./AuthProvider"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
@@ -120,16 +120,16 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
           <>
             <button
               onClick={goPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white rounded-full w-12 h-12 shadow-md backdrop-blur-sm transition hover:scale-105 flex items-center justify-center text-2xl"
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center transition backdrop-blur-sm cursor-pointer"
             >
-              ◀
+              <ChevronLeft size={20} strokeWidth={2.5} />
             </button>
 
             <button
               onClick={goNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white rounded-full w-12 h-12 shadow-md backdrop-blur-sm transition hover:scale-105 flex items-center justify-center text-2xl"
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center transition backdrop-blur-sm cursor-pointer"
             >
-              ▶
+              <ChevronRight size={20} strokeWidth={2.5} />
             </button>
           </>
         )}

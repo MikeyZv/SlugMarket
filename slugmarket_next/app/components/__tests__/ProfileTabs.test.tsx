@@ -20,6 +20,10 @@ vi.mock("../ListingManageModal", () => ({
   default: () => null,
 }));
 
+vi.mock("../ReviewsSection", () => ({
+  default: () => null,
+}));
+
 vi.mock("@/lib/fetchProducts", () => ({
   fetchBookmarkedProducts: vi.fn().mockResolvedValue([]),
 }));

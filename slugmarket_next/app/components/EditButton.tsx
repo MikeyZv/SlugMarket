@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
+import { Pencil } from "lucide-react"
 
 type EditButtonProps = {
     productId: string;
     sellerId: string;
+    className?: string;
 }
 
-// This component renders an edit button for a product listing. It checks if the current user is the seller before rendering.
-export default function EditButton({ productId, sellerId }: EditButtonProps) {
+export default function EditButton({ productId, sellerId, className }: EditButtonProps) {
     const [isOwner, setIsOwner] = useState(false)
 
     useEffect(() => {
@@ -24,9 +25,10 @@ export default function EditButton({ productId, sellerId }: EditButtonProps) {
     return (
         <Link
             href={`/products/edit/${productId}`}
-            className="block w-full rounded-xl border-2 border-black bg-white py-4 text-center text-2xl font-semibold text-black transition hover:bg-gray-50"
+            className={className ?? "flex items-center justify-center gap-2 w-full rounded-xl border-2 border-[#0F2044] bg-white px-6 py-3 text-sm font-semibold text-[#0F2044] transition hover:bg-[#0F2044]/5"}
         >
-            Edit Listing
+            <Pencil size={16} />
+            Edit
         </Link>
     )
 }

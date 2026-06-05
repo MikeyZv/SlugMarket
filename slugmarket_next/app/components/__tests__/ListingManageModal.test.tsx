@@ -115,7 +115,7 @@ describe("ListingManageModal", () => {
 
   it("calls onClose when the close (✕) button is clicked", () => {
     render(<ListingManageModal listing={baseListing} onClose={onClose} />);
-    fireEvent.click(screen.getByText("✕"));
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

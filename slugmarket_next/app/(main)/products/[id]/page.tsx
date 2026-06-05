@@ -5,6 +5,8 @@ import DeleteButton from "../../../components/DeleteButton"
 import EditButton from "../../../components/EditButton"
 import MessageButton from "../../../components/MessageButton"
 import MakeOfferButton from "../../../components/MakeOfferButton"
+import ReportButton from "../../../components/ReportButton"
+import { Share2 } from "lucide-react"
 
 type ProductPageProps = {
     params: Promise<{
@@ -110,13 +112,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </a>
     </div>
 
-    <div className="grid grid-cols-2 gap-4">
-        <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
+    <div className="flex flex-col sm:flex-row gap-3">
+        <EditButton productId={product.id} sellerId={product.seller_id}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#0F2044] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#162d5a] transition cursor-pointer" />
+        <button className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#F5C518] px-5 py-2.5 text-sm font-semibold text-[#0F2044] hover:bg-[#fde047] transition cursor-pointer">
+            <Share2 size={16} />
             Share
         </button>
-        <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
-            Report
-        </button>
+        <ReportButton sellerId={product.seller_id}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 transition cursor-pointer" />
+        <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-red-50 hover:text-red-500 transition cursor-pointer" />
     </div>
 
     {product.sold && (
@@ -135,8 +141,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
     )}
 
-    <EditButton productId={product.id} sellerId={product.seller_id} />
-    <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls} />
         </section>
             </div>
         </main>
