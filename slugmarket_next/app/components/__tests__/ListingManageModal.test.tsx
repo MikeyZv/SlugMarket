@@ -33,6 +33,10 @@ vi.mock("../AuthProvider", () => ({
   useAuth: vi.fn(),
 }));
 
+vi.mock("@/app/actions/listings", () => ({
+  revalidateProduct: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("../DeleteButton", () => ({
   default: ({ className }: { className?: string }) => (
     <button type="button" className={className}>Delete</button>

@@ -1,11 +1,15 @@
 export const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'] as const
 export type Condition = typeof CONDITIONS[number]
 
+export const CATEGORIES = ['Electronics', 'Furniture', 'Clothing', 'Books', 'Other'] as const
+export type Category = typeof CATEGORIES[number]
+
 export interface ListingForm {
   title: string
   price: string
   description: string
   condition: Condition | ''
+  category: Category | ''
 }
 
 export type LocalImage  = { kind: "local";  file: File; url: string }
@@ -67,4 +71,14 @@ export type Message = {
   read_at: string | null
   offer_id: string | null
   offer?: OfferDetails | null
+}
+
+export type Review = {
+  review_id: string
+  reviewer_id: string
+  reviewed_user_id: string
+  listing_id: string
+  rating: number
+  review_text: string | null
+  created_at: string
 }

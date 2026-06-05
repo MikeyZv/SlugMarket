@@ -11,9 +11,10 @@ type Props = {
     listingTitle: string;
     listingImageUrl: string
     sellerId: string;
+    sold?: boolean
 };
 
-export default function MakeOfferButton({ listingPrice, listingId, listingTitle, listingImageUrl, sellerId }: Props) {
+export default function MakeOfferButton({ listingPrice, listingId, listingTitle, listingImageUrl, sellerId, sold }: Props) {
     const { user } = useAuth();
     const router = useRouter();
     const [open, setOpen] = useState(false);
@@ -24,6 +25,17 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
 
     // Don't show to the seller of this listing
     if (user?.id === sellerId) return null;
+
+    if (sold) {
+        return (
+            <button
+                disabled
+                className="w-full rounded-xl bg-gray-200 py-3 md:py-4 text-lg md:text-2xl font-semibold text-gray-500 cursor-not-allowed"
+            >
+                SOLD
+            </button>
+        )
+    }
 
     async function handleSubmit(e: { preventDefault(): void }) {
         e.preventDefault();
@@ -90,7 +102,7 @@ export default function MakeOfferButton({ listingPrice, listingId, listingTitle,
                 .from("notifications")
                 .insert({
                     user_id: sellerId,
-                    message: `New offer of ${Number(offerAmount)}`,
+                    message: `New offer of $${Number(offerAmount)}`,
                     link: `/messages?c=${conversationId}`,
                     image_url: listingImageUrl
                 })

@@ -6,7 +6,7 @@ import { ChevronDown, Check } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "./AuthProvider"
 import { revalidateListings } from "@/app/actions/listings"
-import { CONDITIONS, type ListingForm, type ListingImage, type LocalImage } from "@/lib/types"
+import { CONDITIONS, CATEGORIES, type ListingForm, type ListingImage, type LocalImage } from "@/lib/types"
 import { uploadLocals } from "@/lib/uploadImages"
 import ImageUploadGrid from "./ImageUploadGrid"
 
@@ -41,6 +41,7 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
         price: initialForm?.price ?? "",
         description: initialForm?.description ?? "",
         condition: initialForm?.condition ?? "",
+        category: initialForm?.category ?? "",
     })
     const [images, setImages] = useState<ListingImage[]>(
         initialImageUrls.map((url) => ({ kind: "remote", url }))
@@ -49,11 +50,17 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
     const [error, setError] = useState<string | null>(null)
     const [conditionOpen, setConditionOpen] = useState(false)
     const conditionRef = useRef<HTMLDivElement>(null)
+    const [categoryOpen, setCategoryOpen] = useState(false)
+    const categoryRef = useRef<HTMLDivElement>(null)
+
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             if (conditionRef.current && !conditionRef.current.contains(e.target as Node)) {
                 setConditionOpen(false)
+            }
+            if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
+                setCategoryOpen(false)
             }
         }
         document.addEventListener("mousedown", handleClickOutside)
@@ -92,7 +99,8 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
             const remoteUrls = images.filter((img) => img.kind === "remote").map((img) => img.url)
             const localFiles = images.flatMap((img): File[] => img.kind === "local" ? [(img as LocalImage).file] : [])
             const image_urls = [...remoteUrls, ...await uploadLocals(localFiles, user.id)]
-            const row = { title: form.title, price: parseFloat(form.price), description: form.description, condition: form.condition, image_urls }
+            const row = { title: form.title, price: parseFloat(form.price), description: form.description, condition: form.condition, 
+                category: form.category, image_urls }
 
             if (mode === "create") {
                 const { data: inserted, error: insertError } = await supabase
@@ -169,6 +177,51 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
                         )}
                     </div>
                 </div>
+                <div>
+                <label id="category-label" className="block text-sm font-medium text-gray-700 mb-1">
+                    Category
+                </label>
+
+                <div className="relative" ref={categoryRef}>
+                    <button
+                        type="button"
+                        aria-labelledby="category-label"
+                        onClick={() => setCategoryOpen(v => !v)}
+                        className="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
+                    >
+                        <span className={form.category ? "text-gray-900" : "text-gray-400"}>
+                            {form.category || "Select a category…"}
+                        </span>
+                        <ChevronDown
+                            size={16}
+                            className={`text-gray-400 transition-transform ${categoryOpen ? "rotate-180" : ""}`}
+                        />
+                    </button>
+
+                    {categoryOpen && (
+                        <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                            {CATEGORIES.map((cat) => (
+                                <li key={cat}>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setForm(prev => ({ ...prev, category: cat }))
+                                            setCategoryOpen(false)
+                                        }}
+                                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
+                                    >
+                                        <span className="flex-1 text-left">{cat}</span>
+                                        {form.category === cat && (
+                                            <Check size={14} className="text-[#0F2044] shrink-0" />
+                                        )}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            </div>
+
                 <ImageUploadGrid images={images} onAdd={addImages} onRemove={removeImage} />
                 {error && <p className="text-red-500 text-sm">{error}</p>}
                 <button type="submit" disabled={loadingSubmit} className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-gray-900 font-semibold py-3 rounded-lg transition-colors text-base cursor-pointer">

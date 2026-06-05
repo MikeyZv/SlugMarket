@@ -6,6 +6,8 @@ import { useAuth } from "./AuthProvider";
 import { supabase } from "@/lib/supabase";
 import NavSearchBar from "./NavSearchBar";
 import NotificationBell from "./NotificationBell";
+import useUnreadMessageCount from "@/lib/useUnreadMessageCount"
+
 import {
   House,
   Search,
@@ -30,6 +32,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, avatarUrl } = useAuth();
+  const unreadMessages = useUnreadMessageCount(user?.id)
+  const hasUnreadMessages = unreadMessages > 0
 
   function getLinkClasses(href: string) {
     const isActive =
@@ -99,12 +103,16 @@ export default function Navbar() {
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isProfile = link.label === "Profile";
+              const isMessage = link.label === "Messages"
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex flex-col items-center ${getLinkClasses(link.href)}`}
+                  className={`relative flex flex-col items-center ${getLinkClasses(link.href)}`}
                 >
+                  {isMessage && hasUnreadMessages && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-4 h-4 flex items-center justify-center" />   
+                  )}
                   {isProfile && avatarUrl
                     ? <img src={avatarUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
                     : <Icon size={24} strokeWidth={2} />}
