@@ -5,6 +5,7 @@ import DeleteButton from "../../../components/DeleteButton"
 import EditButton from "../../../components/EditButton"
 import MessageButton from "../../../components/MessageButton"
 import MakeOfferButton from "../../../components/MakeOfferButton"
+import ReviewsSection from "@/app/components/ReviewsSection";
 
 type ProductPageProps = {
     params: Promise<{
@@ -109,6 +110,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <span className="text-gray-900 font-medium">@{sellerUsername}</span>
         </a>
     </div>
+
+    {/* ⭐ Seller Reviews Section ⭐ */}
+    <ReviewsSection profileId={product.seller_id} />
 
     <div className="grid grid-cols-2 gap-4">
         <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
