@@ -3,6 +3,7 @@
 import { Flag } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 
+// ReportButton component renders a button that allows users to report a product listing.
 export default function ReportButton({ sellerId, className }: { sellerId: string; className?: string }) {
     const { user } = useAuth();
     if (user?.id === sellerId) return null;
