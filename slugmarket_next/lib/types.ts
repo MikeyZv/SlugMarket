@@ -22,6 +22,7 @@ export type Listing = {
   price: number;
   description: string;
   condition: string;
+  category?: string | null;
   image_urls: string[];
   seller_id: string;
   sold: boolean;
