@@ -17,10 +17,12 @@ type ProductPageProps = {
     }>;
 };
 
-// ProductPage component is responsible for displaying the details of a single product listing. 
-// It fetches the product data based on the ID from the URL, retrieves the seller's profile information, and displays the product images, title, price, description, and seller information. 
-// It also includes buttons for making an offer, sending a message to the seller, sharing the listing, and reporting it. 
-// Additionally, if the current user is the seller, it shows edit and delete buttons for managing the listing.
+// This is a server component that fetches product data and renders the product details page. 
+// It also fetches the seller's profile information to display their username and avatar. 
+// If the product is sold, it fetches the buyer's username as well. 
+// The page includes buttons for making an offer, messaging the seller, leaving a review, sharing the listing, 
+// reporting the listing, editing the listing (if the viewer is the seller), and deleting the listing (if the viewer is the seller). 
+// It also displays the number of bookmarks and offers for the product.
 export default async function ProductPage({ params }: ProductPageProps) {
     const { id } = await params;
     const product = await fetchProductById(id);

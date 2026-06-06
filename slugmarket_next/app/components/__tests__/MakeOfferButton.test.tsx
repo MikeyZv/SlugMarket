@@ -27,6 +27,7 @@ vi.mock("@/lib/supabase", () => {
     const builder: Record<string, unknown> = {
       select: () => builder,
       eq: () => builder,
+      neq: () => builder,
       gt: () => builder,
       limit: () => builder,
       insert: (values: Record<string, unknown>) => {

@@ -106,11 +106,10 @@ export default function ProductImageGallery({ images, title, product_id }: Produ
           <button
             type="button"
             onClick={toggleBookmark}
-            className="rounded-full bg-white/90 p-3 shadow-md backdrop-blur-sm transition hover:scale-105 cursor-pointer"
+            className="rounded-full bg-black/20 p-3 backdrop-blur-sm transition hover:bg-black/30 hover:scale-105 cursor-pointer"
             aria-label="Toggle bookmark"
           >
-                        
-            <Bookmark className={`h-6 w-6 transition ${isBookmarkActive ? "fill-red-500 text-red-500" : "text-gray-700"}`} />
+            <Bookmark className={`h-6 w-6 transition ${isBookmarkActive ? "fill-red-500 text-red-500" : "text-white"}`} />
           </button>
 
         </div>

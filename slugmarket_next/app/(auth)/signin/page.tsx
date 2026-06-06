@@ -35,9 +35,6 @@ export default function SignInPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <div className="text-center mb-8">
-            <Link href="/">
-              <img src="/logo2.png" alt="SlugMarket" className="h-16 w-auto mx-auto mb-4" />
-            </Link>
             <h1 className="text-3xl font-bold text-[#0F2044]">Welcome back</h1>
             <p className="text-gray-500 mt-1">Sign in to your SlugMarket account</p>
           </div>

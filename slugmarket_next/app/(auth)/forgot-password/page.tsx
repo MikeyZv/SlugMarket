@@ -33,9 +33,6 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <div className="text-center mb-8">
-            <Link href="/">
-              <img src="/logo2.png" alt="SlugMarket" className="h-16 w-auto mx-auto mb-4" />
-            </Link>
             <h1 className="text-3xl font-bold text-[#0F2044]">Reset your password</h1>
           </div>
 
