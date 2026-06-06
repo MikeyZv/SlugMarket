@@ -38,8 +38,6 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
             })
             .filter((p): p is string => p !== null);
 
-        console.log("[DeleteButton] image paths to remove:", filePaths);
-
         if (filePaths.length > 0) {
             const { error: storageError } = await supabase.storage.from(BUCKET).remove(filePaths);
             if (storageError) console.error("[DeleteButton] storage removal error:", storageError);

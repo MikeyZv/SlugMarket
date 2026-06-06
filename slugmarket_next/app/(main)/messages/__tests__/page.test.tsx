@@ -142,6 +142,8 @@ const mockMessageWithOffer: Message = {
     status: "pending",
     seller_id: "user-1",
     buyer_id: "user-2",
+    // Recent so the offer isn't treated as expired (>48h) and stripped on load.
+    created_at: new Date().toISOString(),
     listing: { id: "listing-1", title: "Item", image_urls: [] },
   },
 };

@@ -51,16 +51,20 @@ export default function AvatarUpload({ profileId, username, avatarUrl }: AvatarU
         .from("avatars")
         .getPublicUrl(storagePath);
 
+      // The storage path is stable (upsert overwrites the same file), so the
+      // public URL never changes. Persist a cache-busted URL so that after a
+      // refresh the browser fetches the new image instead of the cached one.
+      const timedUrl = `${publicUrl}?t=${Date.now()}`;
+
       const { error: updateError } = await supabase
         .from("profiles")
-        .update({ avatar_url: publicUrl })
+        .update({ avatar_url: timedUrl })
         .eq("id", profileId);
 
       if (updateError) throw new Error(updateError.message);
 
       // Only update UI and context after both storage upload and DB write succeed
       URL.revokeObjectURL(blobUrl);
-      const timedUrl = `${publicUrl}?t=${Date.now()}`;
       setCurrentUrl(timedUrl);
       setAvatarUrl(timedUrl);
 

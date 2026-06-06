@@ -111,7 +111,7 @@ describe("SignUpPage", () => {
   });
 
   it("disables the submit button and shows loading text while submitting", async () => {
-    let resolveSignUp!: (value: unknown) => void;
+    let resolveSignUp!: (value: Awaited<ReturnType<typeof supabaseModule.supabase.auth.signUp>>) => void;
     vi.mocked(supabaseModule.supabase.auth.signUp).mockReturnValue(
       new Promise((resolve) => { resolveSignUp = resolve; }) as ReturnType<typeof supabaseModule.supabase.auth.signUp>
     );

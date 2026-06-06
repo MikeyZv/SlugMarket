@@ -26,7 +26,7 @@ vi.mock("next/link", () => ({
 describe("SignInPage", () => {
   beforeEach(() => {
     vi.mocked(supabaseModule.supabase.auth.signInWithPassword).mockResolvedValue(
-      { data: { user: null, session: null }, error: null } as Awaited<ReturnType<typeof supabaseModule.supabase.auth.signInWithPassword>>
+      { data: { user: null, session: null }, error: null } as unknown as Awaited<ReturnType<typeof supabaseModule.supabase.auth.signInWithPassword>>
     );
     mockPush.mockClear();
   });
@@ -94,7 +94,7 @@ describe("SignInPage", () => {
   });
 
   it("disables the submit button and shows loading text while submitting", async () => {
-    let resolveSignIn!: (value: unknown) => void;
+    let resolveSignIn!: (value: Awaited<ReturnType<typeof supabaseModule.supabase.auth.signInWithPassword>>) => void;
     vi.mocked(supabaseModule.supabase.auth.signInWithPassword).mockReturnValue(
       new Promise((resolve) => { resolveSignIn = resolve; }) as ReturnType<typeof supabaseModule.supabase.auth.signInWithPassword>
     );
@@ -106,7 +106,7 @@ describe("SignInPage", () => {
 
     expect(screen.getByRole("button", { name: /signing in/i })).toBeDisabled();
 
-    resolveSignIn({ data: { user: null, session: null }, error: null });
+    resolveSignIn({ data: { user: null, session: null }, error: null } as unknown as Awaited<ReturnType<typeof supabaseModule.supabase.auth.signInWithPassword>>);
     await waitFor(() => expect(screen.getByRole("button", { name: /sign in/i })).not.toBeDisabled());
   });
 });
