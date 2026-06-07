@@ -137,7 +137,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#0F2044] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#162d5a] transition cursor-pointer" />
         <ShareButton title={product.title}
             className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#F5C518] px-5 py-2.5 text-sm font-semibold text-[#0F2044] hover:bg-[#fde047] transition cursor-pointer" />
-        <ReportButton sellerId={product.seller_id}
+        <ReportButton listingId={product.id} sellerId={product.seller_id}
             className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 transition cursor-pointer" />
         <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls}
             className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-red-50 hover:text-red-500 transition cursor-pointer" />
