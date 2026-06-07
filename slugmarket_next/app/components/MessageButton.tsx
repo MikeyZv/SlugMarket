@@ -55,7 +55,7 @@ export default function MessageButton({ otherUserId }: { otherUserId: string }) 
     <button
       onClick={handleClick}
       disabled={loading}
-      className="w-full rounded-xl bg-[#0F2044] py-3 md:py-4 text-lg md:text-2xl font-semibold text-white shadow-sm transition hover:bg-[#162d5a] disabled:opacity-50"
+      className="w-full rounded-xl bg-[#0F2044] py-3 md:py-4 text-lg md:text-2xl font-semibold text-white shadow-sm transition hover:bg-[#162d5a] disabled:opacity-50 cursor-pointer"
     >
       {loading ? "Opening…" : "Message"}
     </button>

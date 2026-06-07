@@ -4,23 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { Eye, EyeOff } from "lucide-react";
 
-// This component renders the sign-up form for new users to create an account.
-// It includes fields for username, email, and password, with validation to ensure only @ucsc.edu email addresses are allowed.
-// The form handles submission by calling supabase.auth.signUp and redirects to the homepage on success, or shows an error message on failure. 
-// It also includes a toggle to show/hide the password input for better user experience.
 export default function SignUpPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Handle form submission for creating a new account. 
-  // Validates email, calls supabase signUp, and manages loading and error states.
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     setError(null);
 
@@ -35,11 +30,9 @@ export default function SignUpPage() {
       email,
       password,
       options: {
-        data: { username }, // stored in user metadata; trigger copies to profiles table
+        data: { username },
       },
     });
-
-    console.log("signUp result:", { data, error });
 
     setLoading(false);
 
@@ -49,86 +42,84 @@ export default function SignUpPage() {
       router.push("/");
     }
   }
-  
-  function togglePasswordVisibility() {
-    setShowPassword((prev) => !prev);
-  }
 
   return (
-    <>
-      <main className="max-w-5xl mx-auto px-6 py-16 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Welcome to SlugMarket
-        </h1>
-        <p className="text-gray-500 text-lg mb-8">Create A New Account</p>
-      </main>
-
-      <div className="flex items-center justify-center">
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4 justify-center items-center border-2 rounded-lg shadow w-64 min-h-72 p-4"
-        >
-          <div>
-            <input
-              type="text"
-              name="username"
-              placeholder="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="border p-2 rounded"
-            />
+    <main className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-[#0F2044]">Create an account</h1>
+            <p className="text-gray-500 mt-1">Join SlugMarket with your UCSC email</p>
           </div>
 
-          <div>
-            <input
-              type="email"
-              name="email"
-              placeholder="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="border p-2 rounded"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Username</label>
+              <input
+                type="text"
+                name="username"
+                placeholder="slugger123"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-[#0F2044] focus:outline-none transition"
+              />
+            </div>
 
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="border p-2 rounded"
-            />
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="you@ucsc.edu"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-[#0F2044] focus:outline-none transition"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 pr-12 text-base focus:border-[#0F2044] focus:outline-none transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+
             <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500"
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] disabled:opacity-50 mt-1 cursor-pointer"
             >
-              {showPassword ? "hide" : "show"}
+              {loading ? "Creating account…" : "Create Account"}
             </button>
-          </div>
+          </form>
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-40 disabled:opacity-50"
-          >
-            {loading ? "Creating…" : "Create Account"}
-          </button>
-
-          <p>
+          <p className="text-center text-gray-500 text-sm mt-6">
             Already have an account?{" "}
-            <Link href="/signin" className="text-blue-500 hover:underline">
-              Log in
+            <Link href="/signin" className="text-[#0F2044] font-semibold hover:underline">
+              Sign in
             </Link>
           </p>
-        </form>
+        </div>
       </div>
-    </>
+    </main>
   );
 }

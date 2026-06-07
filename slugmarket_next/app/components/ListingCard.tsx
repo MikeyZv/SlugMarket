@@ -8,7 +8,7 @@ type ListingCardProps = {
   onSelectListing?: () => void;
 }
 
-const cardStyle = "block rounded-xl overflow-hidden min-w-[250px] relative aspect-[4/3] hover:shadow-lg transition-shadow text-left"
+const cardStyle = "block rounded-xl overflow-hidden min-w-[250px] relative aspect-[4/3] hover:shadow-lg transition-shadow text-left cursor-pointer"
 
 export default function ListingCard({ listing, priority, onSelectListing}: ListingCardProps) {
   const content = (

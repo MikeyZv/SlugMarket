@@ -30,7 +30,7 @@ describe("ForgotPasswordPage", () => {
   // Test that the component renders the email input and submit button
   it("renders the email input and submit button", () => {
     render(<ForgotPasswordPage />);
-    expect(screen.getByPlaceholderText("email")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("you@ucsc.edu")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /send reset link/i })).toBeInTheDocument();
   });
 
@@ -43,7 +43,7 @@ describe("ForgotPasswordPage", () => {
   // Test that the component shows a confirmation message after a successful submission, including the entered email
   it("shows confirmation after a successful submission", async () => {
     render(<ForgotPasswordPage />);
-    fireEvent.change(screen.getByPlaceholderText("email"), { target: { value: "user@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText("you@ucsc.edu"), { target: { value: "user@example.com" } });
     fireEvent.submit(screen.getByRole("button", { name: /send reset link/i }).closest("form")!);
 
     await waitFor(() => expect(screen.getByText(/check your inbox/i)).toBeInTheDocument());
@@ -57,7 +57,7 @@ describe("ForgotPasswordPage", () => {
     );
 
     render(<ForgotPasswordPage />);
-    fireEvent.change(screen.getByPlaceholderText("email"), { target: { value: "nobody@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText("you@ucsc.edu"), { target: { value: "nobody@example.com" } });
     fireEvent.submit(screen.getByRole("button", { name: /send reset link/i }).closest("form")!);
 
     await waitFor(() => expect(screen.getByText("User not found")).toBeInTheDocument());
@@ -66,7 +66,7 @@ describe("ForgotPasswordPage", () => {
   // Test that the component calls resetPasswordForEmail with the entered email and a redirect URL containing "/reset-password"
   it("calls resetPasswordForEmail with the entered email", async () => {
     render(<ForgotPasswordPage />);
-    fireEvent.change(screen.getByPlaceholderText("email"), { target: { value: "test@ucsc.edu" } });
+    fireEvent.change(screen.getByPlaceholderText("you@ucsc.edu"), { target: { value: "test@ucsc.edu" } });
     fireEvent.submit(screen.getByRole("button", { name: /send reset link/i }).closest("form")!);
 
     await waitFor(() =>

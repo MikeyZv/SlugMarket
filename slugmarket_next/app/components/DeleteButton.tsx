@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
 import { revalidateListings } from "@/app/actions/listings";
+import { Trash2 } from "lucide-react";
 
 type DeleteButtonProps = {
     productId: string;
@@ -37,8 +38,6 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
             })
             .filter((p): p is string => p !== null);
 
-        console.log("[DeleteButton] image paths to remove:", filePaths);
-
         if (filePaths.length > 0) {
             const { error: storageError } = await supabase.storage.from(BUCKET).remove(filePaths);
             if (storageError) console.error("[DeleteButton] storage removal error:", storageError);
@@ -58,8 +57,9 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
         <>
             <button
                 onClick={() => setShowModal(true)}
-                className={className ?? "w-full rounded-xl border-2 border-red-500 bg-white py-4 text-2xl font-semibold text-red-500 transition hover:bg-red-50"}
+                className={className ?? "flex items-center justify-center gap-2 w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-500 transition hover:border-red-300 hover:text-red-500 cursor-pointer"}
             >
+                <Trash2 size={16} />
                 Delete Listing
             </button>
 
@@ -74,14 +74,14 @@ export default function DeleteButton({ productId, sellerId, imageUrls, className
                             <button
                                 onClick={handleDelete}
                                 disabled={loading}
-                                className="w-full rounded-xl bg-red-500 py-3 text-lg font-semibold text-white transition hover:bg-red-600 disabled:opacity-50"
+                                className="w-full rounded-xl bg-red-500 py-3 text-lg font-semibold text-white transition hover:bg-red-600 disabled:opacity-50 cursor-pointer"
                             >
                                 {loading ? "Deleting..." : "Yes, delete it"}
                             </button>
                             <button
                                 onClick={() => setShowModal(false)}
                                 disabled={loading}
-                                className="w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+                                className="w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-lg font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
                             >
                                 Cancel
                             </button>

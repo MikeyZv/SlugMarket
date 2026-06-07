@@ -18,7 +18,8 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
                 title: product.title,
                 price: String(product.price),
                 description: product.description,
-                condition: product.condition
+                condition: product.condition,
+                category: product.category ?? ''
             }}
             initialImageUrls={product.image_urls}
         />

@@ -1,10 +1,15 @@
 import { fetchBookmarkCount, fetchProductById, fetchOfferCount } from "@/lib/fetchProducts";
 import { supabase } from "@/lib/supabase";
+import { Suspense } from "react"
 import ProductImageGallery from "../../../components/ProductImageGallery"
 import DeleteButton from "../../../components/DeleteButton"
 import EditButton from "../../../components/EditButton"
 import MessageButton from "../../../components/MessageButton"
 import MakeOfferButton from "../../../components/MakeOfferButton"
+import ReviewsSection from "@/app/components/ReviewsSection";
+import LeaveReviewButton from "@/app/components/LeaveReviewButton";
+import ReportButton from "@/app/components/ReportButton";
+import ShareButton from "@/app/components/ShareButton";
 
 type ProductPageProps = {
     params: Promise<{
@@ -12,10 +17,12 @@ type ProductPageProps = {
     }>;
 };
 
-// ProductPage component is responsible for displaying the details of a single product listing. 
-// It fetches the product data based on the ID from the URL, retrieves the seller's profile information, and displays the product images, title, price, description, and seller information. 
-// It also includes buttons for making an offer, sending a message to the seller, sharing the listing, and reporting it. 
-// Additionally, if the current user is the seller, it shows edit and delete buttons for managing the listing.
+// This is a server component that fetches product data and renders the product details page. 
+// It also fetches the seller's profile information to display their username and avatar. 
+// If the product is sold, it fetches the buyer's username as well. 
+// The page includes buttons for making an offer, messaging the seller, leaving a review, sharing the listing, 
+// reporting the listing, editing the listing (if the viewer is the seller), and deleting the listing (if the viewer is the seller). 
+// It also displays the number of bookmarks and offers for the product.
 export default async function ProductPage({ params }: ProductPageProps) {
     const { id } = await params;
     const product = await fetchProductById(id);
@@ -32,6 +39,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     const sellerUsername = profile?.username ?? "unknown";
     const sellerAvatarUrl = profile?.avatar_url ?? null;
+
+    let buyerUsername: string | null = null;
+    if (product.sold && product.buyer_id) {
+        const { data: buyerProfile } = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("id", product.buyer_id)
+            .single();
+        buyerUsername = buyerProfile?.username ?? null;
+    }
 
     const bookmarkCount = await fetchBookmarkCount(id);
     const offerCount = await fetchOfferCount(id);
@@ -73,20 +90,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </span>
             </div>
 
+            {/* Review button that shows up only for confirmed buyer*/}
+            <Suspense fallback={null}>
+                <LeaveReviewButton
+                    listingId={product.id}
+                    sellerId={product.seller_id}
+                    sellerUsername={sellerUsername}
+                    listingTitle={product.title}
+                    buyerId={product.buyer_id}
+                    sold={product.sold}
+                />
+            </Suspense>
+
             <div className="flex flex-col gap-4">
-                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} sellerId={product.seller_id} />
+                <MakeOfferButton listingPrice={product.price} listingId={product.id} listingTitle={product.title} listingImageUrl={product.image_urls[0]} sellerId={product.seller_id} sold={product.sold}/>
                 <MessageButton otherUserId={product.seller_id} />
-
-            <div className="grid grid-cols-2 gap-4">
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
-                    Share
-                </button>
-
-                <button className="rounded-xl border-2 border-black bg-white py-2 text-base md:text-xl font-semibold text-black transition hover:bg-gray-50">
-                    Report
-                </button>
             </div>
-    </div>
 
     <hr className="border-gray-300" />
 
@@ -110,8 +129,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </a>
     </div>
 
-    <EditButton productId={product.id} sellerId={product.seller_id} />
-    <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls} />
+    {/* ⭐ Seller Reviews Section ⭐ */}
+    <ReviewsSection profileId={product.seller_id} />
+
+    <div className="flex flex-col sm:flex-row gap-3">
+        <EditButton productId={product.id} sellerId={product.seller_id}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#0F2044] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#162d5a] transition cursor-pointer" />
+        <ShareButton title={product.title}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#F5C518] px-5 py-2.5 text-sm font-semibold text-[#0F2044] hover:bg-[#fde047] transition cursor-pointer" />
+        <ReportButton sellerId={product.seller_id}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 transition cursor-pointer" />
+        <DeleteButton productId={product.id} sellerId={product.seller_id} imageUrls={product.image_urls}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-red-50 hover:text-red-500 transition cursor-pointer" />
+    </div>
+
+    {product.sold && (
+        <div className="flex items-center gap-2 rounded-xl bg-green-50 border border-green-200 px-4 py-3">
+            <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">Sold</span>
+            {buyerUsername ? (
+                <span className="text-sm text-gray-700">
+                    Sold to{" "}
+                    <a href={`/${buyerUsername}`} className="font-semibold text-gray-900 hover:underline">
+                        @{buyerUsername}
+                    </a>
+                </span>
+            ) : (
+                <span className="text-sm text-gray-500">This item has been sold.</span>
+            )}
+        </div>
+    )}
+
         </section>
             </div>
         </main>

@@ -5,6 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/lib/supabase";
 import NavSearchBar from "./NavSearchBar";
+import NotificationBell from "./NotificationBell";
+import useUnreadMessageCount from "@/lib/useUnreadMessageCount"
+
 import {
   House,
   Search,
@@ -29,6 +32,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, avatarUrl } = useAuth();
+  const unreadMessages = useUnreadMessageCount(user?.id)
+  const hasUnreadMessages = unreadMessages > 0
 
   function getLinkClasses(href: string) {
     const isActive =
@@ -78,34 +83,52 @@ export default function Navbar() {
           <div className="hidden min-[945px]:block w-64">
             <NavSearchBar />
           </div>
+          
+          {/* Mobile-only top bar right side */}
+          {user && (
+            <div className="flex items-center gap-5 min-[770px]:hidden">
+              <NotificationBell />
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex items-center text-gray-700 hover:text-blue-600 cursor-pointer"
+              >
+                <LogOut size={24} strokeWidth={2} />
+              </button>
+            </div>
+          )}
 
           {/* Desktop nav links — hidden on mobile */}
           <div className="hidden min-[770px]:flex items-center gap-8">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isProfile = link.label === "Profile";
+              const isMessage = link.label === "Messages"
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex flex-col items-center gap-1 text-sm ${getLinkClasses(link.href)}`}
+                  className={`relative flex flex-col items-center ${getLinkClasses(link.href)}`}
                 >
+                  {isMessage && hasUnreadMessages && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-4 h-4 flex items-center justify-center" />   
+                  )}
                   {isProfile && avatarUrl
-                    ? <img src={avatarUrl} alt="avatar" className="w-11 h-11 rounded-full object-cover" />
-                    : <Icon size={22} strokeWidth={2} />}
-                  {!(isProfile && avatarUrl) && <span>{link.label}</span>}
+                    ? <img src={avatarUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                    : <Icon size={24} strokeWidth={2} />}
                 </Link>
               );
             })}
+
+            {user && <NotificationBell />}
 
             {user && (
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-blue-600"
+                className="flex flex-col items-center text-gray-700 hover:text-blue-600 cursor-pointer"
               >
-                <LogOut size={22} strokeWidth={2} />
-                <span>Sign Out</span>
+                <LogOut size={24} strokeWidth={2} />
               </button>
             )}
           </div>
@@ -122,26 +145,15 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${getLinkClasses(link.href)}`}
+                className={`flex flex-col items-center px-3 py-1 ${getLinkClasses(link.href)}`}
               >
                 {isProfile && avatarUrl
-                  ? <img src={avatarUrl} alt="avatar" className="w-7 h-7 rounded-full object-cover" />
-                  : <Icon size={20} strokeWidth={2} />}
-                <span>{link.label}</span>
+                  ? <img src={avatarUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                  : <Icon size={24} strokeWidth={2} />}
               </Link>
             );
           })}
 
-          {user && (
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="flex flex-col items-center gap-0.5 text-xs px-3 py-1 text-gray-700 hover:text-blue-600"
-            >
-              <LogOut size={20} strokeWidth={2} />
-              <span>Sign Out</span>
-            </button>
-          )}
         </div>
       </nav>
     </>

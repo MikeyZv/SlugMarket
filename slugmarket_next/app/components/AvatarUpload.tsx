@@ -51,16 +51,20 @@ export default function AvatarUpload({ profileId, username, avatarUrl }: AvatarU
         .from("avatars")
         .getPublicUrl(storagePath);
 
+      // The storage path is stable (upsert overwrites the same file), so the
+      // public URL never changes. Persist a cache-busted URL so that after a
+      // refresh the browser fetches the new image instead of the cached one.
+      const timedUrl = `${publicUrl}?t=${Date.now()}`;
+
       const { error: updateError } = await supabase
         .from("profiles")
-        .update({ avatar_url: publicUrl })
+        .update({ avatar_url: timedUrl })
         .eq("id", profileId);
 
       if (updateError) throw new Error(updateError.message);
 
       // Only update UI and context after both storage upload and DB write succeed
       URL.revokeObjectURL(blobUrl);
-      const timedUrl = `${publicUrl}?t=${Date.now()}`;
       setCurrentUrl(timedUrl);
       setAvatarUrl(timedUrl);
 
@@ -77,8 +81,8 @@ export default function AvatarUpload({ profileId, username, avatarUrl }: AvatarU
   }
 
   return (
-    <div className="relative w-20 h-20 shrink-0">
-      <div className="w-20 h-20 rounded-full bg-yellow-400 flex items-center justify-center text-3xl font-bold text-white overflow-hidden">
+    <div className="relative w-24 h-24 shrink-0">
+      <div className="w-24 h-24 rounded-full bg-[#F5C518] border-4 border-white flex items-center justify-center text-3xl font-bold text-[#0F2044] overflow-hidden shadow-sm">
         {currentUrl ? (
           <img
             src={currentUrl}
@@ -97,9 +101,9 @@ export default function AvatarUpload({ profileId, username, avatarUrl }: AvatarU
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
             title="Change profile picture"
-            className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center shadow hover:bg-yellow-500 transition-colors disabled:opacity-50 cursor-pointer"
+            className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#0F2044] border-2 border-white flex items-center justify-center shadow hover:bg-[#162d5a] transition-colors disabled:opacity-50 cursor-pointer"
           >
-            <span className="text-white font-bold text-sm leading-none">+</span>
+            <span className="text-white font-bold text-base leading-none">+</span>
           </button>
           <input
             ref={fileInputRef}
@@ -112,8 +116,8 @@ export default function AvatarUpload({ profileId, username, avatarUrl }: AvatarU
       )}
 
       {uploading && (
-        <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center">
-          <span className="text-white text-xs">...</span>
+        <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center border-4 border-white">
+          <span className="text-white text-xs">…</span>
         </div>
       )}
 

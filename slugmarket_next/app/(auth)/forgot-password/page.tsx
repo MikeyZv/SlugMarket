@@ -4,15 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-// This component renders a forgot password form that allows users to request a password reset email. 
-// It handles form submission, shows loading and error states, and displays a confirmation message after a successful request.
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -31,57 +29,60 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <>
-      <main className="max-w-5xl mx-auto px-6 py-16 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Reset your password
-        </h1>
-        <p className="text-gray-500 text-lg mb-8">
-          Enter your email and we&apos;ll send you a reset link.
-        </p>
-      </main>
-
-      <div className="flex items-center justify-center">
-        {sent ? (
-          <div className="flex flex-col items-center gap-4 border-2 rounded-lg shadow w-72 px-6 py-8 text-center">
-            <p className="text-gray-800 font-medium">Check your inbox</p>
-            <p className="text-gray-500 text-sm">
-              We sent a password reset link to <strong>{email}</strong>.
-            </p>
-            <Link href="/signin" className="text-blue-500 hover:underline text-sm">
-              Back to sign in
-            </Link>
+    <main className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-[#0F2044]">Reset your password</h1>
           </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4 justify-center items-center border-2 rounded-lg shadow w-64 px-6 py-8"
-          >
-            <input
-              type="email"
-              placeholder="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="border p-2 rounded w-full"
-            />
 
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {sent ? (
+            <div className="flex flex-col items-center gap-4 text-center py-2">
+              <div className="text-4xl">✉️</div>
+              <p className="text-lg font-semibold text-gray-900">Check your inbox</p>
+              <p className="text-gray-500 text-sm">
+                We sent a password reset link to <span className="font-semibold text-gray-800">{email}</span>.
+              </p>
+              <Link
+                href="/signin"
+                className="mt-2 w-full rounded-xl bg-[#0F2044] py-3 text-base font-semibold text-white text-center hover:bg-[#162d5a] transition"
+              >
+                Back to sign in
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  placeholder="you@ucsc.edu"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-[#0F2044] focus:outline-none transition"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-full disabled:opacity-50"
-            >
-              {loading ? "Sending…" : "Send reset link"}
-            </button>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <Link href="/signin" className="text-gray-500 text-sm hover:underline">
-              Back to sign in
-            </Link>
-          </form>
-        )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-[#F5C518] py-3 text-lg font-semibold text-[#0F2044] shadow-sm transition hover:bg-[#fde047] disabled:opacity-50 mt-1 cursor-pointer"
+              >
+                {loading ? "Sending…" : "Send reset link"}
+              </button>
+
+              <p className="text-center text-gray-500 text-sm mt-2">
+                <Link href="/signin" className="text-[#0F2044] font-semibold hover:underline">
+                  Back to sign in
+                </Link>
+              </p>
+            </form>
+          )}
+        </div>
       </div>
-    </>
+    </main>
   );
 }

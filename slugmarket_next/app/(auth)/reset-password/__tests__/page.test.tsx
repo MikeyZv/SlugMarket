@@ -10,6 +10,12 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+vi.mock("next/link", () => ({
+  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
+    <a href={href} className={className}>{children}</a>
+  ),
+}));
+
 // Capture the auth callback so tests can fire auth events manually.
 type AuthCallback = (event: string, session: unknown) => void;
 let capturedCallback: AuthCallback | null = null;
@@ -48,15 +54,15 @@ describe("ResetPasswordPage", () => {
   it("shows a verifying state before the auth event fires", () => {
     render(<ResetPasswordPage />);
     expect(screen.getByText(/verifying reset link/i)).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText("new password")).toBeNull();
+    expect(screen.queryByPlaceholderText("Create a new password")).toBeNull();
   });
 
   // Test that the component shows the new password and confirm password fields when a PASSWORD_RECOVERY event is fired
   it("shows the password form after a PASSWORD_RECOVERY event", () => {
     render(<ResetPasswordPage />);
     triggerAuthEvent("PASSWORD_RECOVERY");
-    expect(screen.getByPlaceholderText("new password")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("confirm password")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Create a new password")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Repeat your new password")).toBeInTheDocument();
   });
 
   // Test that the component shows an error message when the new password and confirm password fields do not match, and does not call updateUser
@@ -64,8 +70,8 @@ describe("ResetPasswordPage", () => {
     render(<ResetPasswordPage />);
     triggerAuthEvent("PASSWORD_RECOVERY");
 
-    fireEvent.change(screen.getByPlaceholderText("new password"), { target: { value: "password1" } });
-    fireEvent.change(screen.getByPlaceholderText("confirm password"), { target: { value: "password2" } });
+    fireEvent.change(screen.getByPlaceholderText("Create a new password"), { target: { value: "password1" } });
+    fireEvent.change(screen.getByPlaceholderText("Repeat your new password"), { target: { value: "password2" } });
     fireEvent.submit(screen.getByRole("button", { name: /update password/i }).closest("form")!);
 
     expect(screen.getByText(/passwords do not match/i)).toBeInTheDocument();
@@ -77,8 +83,8 @@ describe("ResetPasswordPage", () => {
     render(<ResetPasswordPage />);
     triggerAuthEvent("PASSWORD_RECOVERY");
 
-    fireEvent.change(screen.getByPlaceholderText("new password"), { target: { value: "abc" } });
-    fireEvent.change(screen.getByPlaceholderText("confirm password"), { target: { value: "abc" } });
+    fireEvent.change(screen.getByPlaceholderText("Create a new password"), { target: { value: "abc" } });
+    fireEvent.change(screen.getByPlaceholderText("Repeat your new password"), { target: { value: "abc" } });
     fireEvent.submit(screen.getByRole("button", { name: /update password/i }).closest("form")!);
 
     expect(screen.getByText(/at least 6 characters/i)).toBeInTheDocument();
@@ -90,8 +96,8 @@ describe("ResetPasswordPage", () => {
     render(<ResetPasswordPage />);
     triggerAuthEvent("PASSWORD_RECOVERY");
 
-    fireEvent.change(screen.getByPlaceholderText("new password"), { target: { value: "newpass123" } });
-    fireEvent.change(screen.getByPlaceholderText("confirm password"), { target: { value: "newpass123" } });
+    fireEvent.change(screen.getByPlaceholderText("Create a new password"), { target: { value: "newpass123" } });
+    fireEvent.change(screen.getByPlaceholderText("Repeat your new password"), { target: { value: "newpass123" } });
     fireEvent.submit(screen.getByRole("button", { name: /update password/i }).closest("form")!);
 
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith("/"));
@@ -107,8 +113,8 @@ describe("ResetPasswordPage", () => {
     render(<ResetPasswordPage />);
     triggerAuthEvent("PASSWORD_RECOVERY");
 
-    fireEvent.change(screen.getByPlaceholderText("new password"), { target: { value: "newpass123" } });
-    fireEvent.change(screen.getByPlaceholderText("confirm password"), { target: { value: "newpass123" } });
+    fireEvent.change(screen.getByPlaceholderText("Create a new password"), { target: { value: "newpass123" } });
+    fireEvent.change(screen.getByPlaceholderText("Repeat your new password"), { target: { value: "newpass123" } });
     fireEvent.submit(screen.getByRole("button", { name: /update password/i }).closest("form")!);
 
     await waitFor(() => expect(screen.getByText("Token has expired")).toBeInTheDocument());

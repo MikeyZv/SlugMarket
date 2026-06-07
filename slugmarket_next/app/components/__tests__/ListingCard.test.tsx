@@ -28,6 +28,7 @@ const baseListing: Listing = {
   image_urls: ["/bike.jpg"],
   seller_id: "seller-1",
   sold: false,
+  created_at: "2024-01-01T00:00:00Z",
 };
 
 // Test suite for the ListingCard component, covering rendering as a link or button, displaying title and price, and showing sold status
