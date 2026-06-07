@@ -92,15 +92,15 @@
 
 ### Team roles:
 - Andrew Le - Product Owner
-- Luis Del Rosario - Scrum Master
-- Kenny Young - Team Member
+- Kenny Young - Scrum Master
+- Luis Del Rosario - Team Member
 - Miguel Zavala - Team Member
 
 ### Initial task assignment:
-- Andrew Le - user story 1: task 1, user story 6
-- Miguel Zavala - user story 2, task 1
-- Kenny Young - user story 1, task 1
-- Luis Del Rosario - user story 4, task 1
+- Andrew Le - user story 1: task 1
+- Miguel Zavala - user story 6: task 1
+- Kenny Young - user story 2: task 1
+- Luis Del Rosario - user story 5: task 1
 
 ### Initial burnup chart:
 

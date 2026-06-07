@@ -71,10 +71,10 @@
 - Luis Del Rosario - Team Member
 
 ### Initial task assignment:
-- Andrew Le - user story 3, task 2
-- Miguel Zavala - user story 2, task 1
-- Kenny Young - user story 1, task 1
-- Luis Del Rosario - user story 4, task 1
+- Andrew Le - user story 3: task 2
+- Miguel Zavala - user story 2: task 1
+- Kenny Young - user story 1: task 1
+- Luis Del Rosario - user story 4: task 1
 
 ### Initial burnup chart:
 
