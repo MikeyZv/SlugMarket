@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Pencil, X, ChevronDown, Check } from "lucide-react";
+import { useState } from "react";
+import { Pencil, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+import Dropdown from "./Dropdown";
 
 const COLLEGES = [
   "Cowell",
@@ -35,22 +36,9 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
   const [draftBio, setDraftBio] = useState(initialBio ?? "");
   const [draftCollege, setDraftCollege] = useState(initialCollege ?? "");
   const [open, setOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isOwner = user?.id === profileId;
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   function openModal() {
     setDraftBio(bio);
@@ -59,20 +47,17 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
   }
 
   function closeModal() {
-    setDropdownOpen(false);
     setOpen(false);
   }
 
   async function handleSave() {
     setSaving(true);
+    const trimmedBio = draftBio.trim();
     await supabase
       .from("profiles")
-      .update({
-        bio: draftBio.trim() || null,
-        college: draftCollege || null,
-      })
+      .update({ bio: trimmedBio || null, college: draftCollege || null })
       .eq("id", profileId);
-    setBio(draftBio.trim());
+    setBio(trimmedBio);
     setCollege(draftCollege);
     setSaving(false);
     setOpen(false);
@@ -116,50 +101,16 @@ export default function EditProfile({ profileId, initialBio, initialCollege }: P
             </div>
 
             <div className="flex flex-col gap-4">
-              {/* Custom college dropdown */}
+              {/* College dropdown */}
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1">College</label>
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen((v) => !v)}
-                    className="w-full flex items-center justify-between rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-[#0F2044] focus:outline-none transition bg-white cursor-pointer"
-                  >
-                    <span className={draftCollege ? "text-gray-800" : "text-gray-400"}>
-                      {draftCollege ? formatCollege(draftCollege) : "Select your college…"}
-                    </span>
-                    <ChevronDown
-                      size={16}
-                      className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-
-                  {dropdownOpen && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-56 overflow-y-auto">
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => { setDraftCollege(""); setDropdownOpen(false); }}
-                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-50 transition cursor-pointer"
-                        >
-                          <span className="flex-1 text-left">None</span>
-                        </button>
-                      </li>
-                      {COLLEGES.map((c) => (
-                        <li key={c}>
-                          <button
-                            type="button"
-                            onClick={() => { setDraftCollege(c); setDropdownOpen(false); }}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
-                          >
-                            <span className="flex-1 text-left">{formatCollege(c)}</span>
-                            {draftCollege === c && <Check size={14} className="text-[#0F2044] shrink-0" />}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+                <Dropdown
+                  value={draftCollege}
+                  onSelect={setDraftCollege}
+                  placeholder="Select your college…"
+                  triggerClassName="w-full flex items-center justify-between rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-[#0F2044] focus:outline-none transition bg-white cursor-pointer"
+                  options={[{ value: "", label: "None" }, ...COLLEGES.map((c) => ({ value: c, label: formatCollege(c) }))]}
+                />
               </div>
 
               {/* Bio textarea */}

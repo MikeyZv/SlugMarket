@@ -1,10 +1,11 @@
 "use client";
 
-import { Flag, ChevronDown, Check } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Flag } from "lucide-react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+import Dropdown from "./Dropdown";
 
 type Props = { listingId: string; sellerId: string; className?: string };
 
@@ -24,22 +25,10 @@ export default function ReportButton({ listingId, sellerId, className }: Props) 
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [reason, setReason] = useState(REASONS[0]);
-    const [reasonOpen, setReasonOpen] = useState(false);
-    const reasonRef = useRef<HTMLDivElement>(null);
     const [details, setDetails] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        function handleClickOutside(e: MouseEvent) {
-            if (reasonRef.current && !reasonRef.current.contains(e.target as Node)) {
-                setReasonOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
 
     if (user?.id === sellerId) return null;
 
@@ -102,32 +91,12 @@ export default function ReportButton({ listingId, sellerId, className }: Props) 
                                 </div>
                                 <div className="flex flex-col gap-1 text-sm font-medium text-gray-700">
                                     Reason
-                                    <div className="relative" ref={reasonRef}>
-                                        <button
-                                            type="button"
-                                            onClick={() => setReasonOpen((v) => !v)}
-                                            className="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
-                                        >
-                                            <span className="text-gray-900">{reason}</span>
-                                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${reasonOpen ? "rotate-180" : ""}`} />
-                                        </button>
-                                        {reasonOpen && (
-                                            <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                                                {REASONS.map((r) => (
-                                                    <li key={r}>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => { setReason(r); setReasonOpen(false); }}
-                                                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
-                                                        >
-                                                            <span className="flex-1 text-left">{r}</span>
-                                                            {reason === r && <Check size={14} className="text-[#0F2044] shrink-0" />}
-                                                        </button>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
+                                    <Dropdown
+                                        value={reason}
+                                        onSelect={setReason}
+                                        triggerClassName="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
+                                        options={REASONS.map((r) => ({ value: r, label: r }))}
+                                    />
                                 </div>
                                 <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
                                     Details <span className="font-normal text-gray-400">(optional)</span>

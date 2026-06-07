@@ -1,14 +1,14 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronDown, Check } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "./AuthProvider"
 import { revalidateListings } from "@/app/actions/listings"
 import { CONDITIONS, CATEGORIES, type ListingForm, type ListingImage, type LocalImage } from "@/lib/types"
 import { uploadLocals } from "@/lib/uploadImages"
 import ImageUploadGrid from "./ImageUploadGrid"
+import Dropdown from "./Dropdown"
 
 const inputCls = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent"
 
@@ -48,24 +48,6 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
     )
     const [loadingSubmit, setLoadingSubmit] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [conditionOpen, setConditionOpen] = useState(false)
-    const conditionRef = useRef<HTMLDivElement>(null)
-    const [categoryOpen, setCategoryOpen] = useState(false)
-    const categoryRef = useRef<HTMLDivElement>(null)
-
-
-    useEffect(() => {
-        function handleClickOutside(e: MouseEvent) {
-            if (conditionRef.current && !conditionRef.current.contains(e.target as Node)) {
-                setConditionOpen(false)
-            }
-            if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
-                setCategoryOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -147,80 +129,26 @@ export default function ProductListingForm({ mode, listingId, initialForm, initi
                 </Field>
                 <div>
                     <label id="condition-label" className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
-                    <div className="relative" ref={conditionRef}>
-                        <button
-                            type="button"
-                            aria-labelledby="condition-label"
-                            onClick={() => setConditionOpen((v) => !v)}
-                            className="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
-                        >
-                            <span className={form.condition ? "text-gray-900" : "text-gray-400"}>
-                                {form.condition || "Select a condition…"}
-                            </span>
-                            <ChevronDown size={16} className={`text-gray-400 transition-transform ${conditionOpen ? "rotate-180" : ""}`} />
-                        </button>
-                        {conditionOpen && (
-                            <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                                {CONDITIONS.map((c) => (
-                                    <li key={c}>
-                                        <button
-                                            type="button"
-                                            onClick={() => { setForm((prev) => ({ ...prev, condition: c })); setConditionOpen(false) }}
-                                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
-                                        >
-                                            <span className="flex-1 text-left">{c}</span>
-                                            {form.condition === c && <Check size={14} className="text-[#0F2044] shrink-0" />}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+                    <Dropdown
+                        value={form.condition}
+                        onSelect={(v) => setForm((prev) => ({ ...prev, condition: v as ListingForm["condition"] }))}
+                        placeholder="Select a condition…"
+                        ariaLabelledby="condition-label"
+                        triggerClassName="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
+                        options={CONDITIONS.map((c) => ({ value: c, label: c }))}
+                    />
                 </div>
                 <div>
-                <label id="category-label" className="block text-sm font-medium text-gray-700 mb-1">
-                    Category
-                </label>
-
-                <div className="relative" ref={categoryRef}>
-                    <button
-                        type="button"
-                        aria-labelledby="category-label"
-                        onClick={() => setCategoryOpen(v => !v)}
-                        className="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
-                    >
-                        <span className={form.category ? "text-gray-900" : "text-gray-400"}>
-                            {form.category || "Select a category…"}
-                        </span>
-                        <ChevronDown
-                            size={16}
-                            className={`text-gray-400 transition-transform ${categoryOpen ? "rotate-180" : ""}`}
-                        />
-                    </button>
-
-                    {categoryOpen && (
-                        <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                            {CATEGORIES.map((cat) => (
-                                <li key={cat}>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setForm(prev => ({ ...prev, category: cat }))
-                                            setCategoryOpen(false)
-                                        }}
-                                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-800 hover:bg-[#0F2044]/5 transition cursor-pointer"
-                                    >
-                                        <span className="flex-1 text-left">{cat}</span>
-                                        {form.category === cat && (
-                                            <Check size={14} className="text-[#0F2044] shrink-0" />
-                                        )}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                    <label id="category-label" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <Dropdown
+                        value={form.category}
+                        onSelect={(v) => setForm((prev) => ({ ...prev, category: v as ListingForm["category"] }))}
+                        placeholder="Select a category…"
+                        ariaLabelledby="category-label"
+                        triggerClassName="w-full flex items-center justify-between rounded-lg border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0F2044] focus:border-transparent transition cursor-pointer"
+                        options={CATEGORIES.map((cat) => ({ value: cat, label: cat }))}
+                    />
                 </div>
-            </div>
 
                 <ImageUploadGrid images={images} onAdd={addImages} onRemove={removeImage} />
                 {error && <p className="text-red-500 text-sm">{error}</p>}

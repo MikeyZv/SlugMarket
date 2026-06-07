@@ -85,14 +85,20 @@ describe("SignUpPage", () => {
     );
   });
 
-  it("redirects to '/' on successful sign-up", async () => {
+  it("shows the email verification prompt on successful sign-up", async () => {
     render(<SignUpPage />);
     fireEvent.change(screen.getByPlaceholderText("slugger123"), { target: { value: "slugger" } });
     fireEvent.change(screen.getByPlaceholderText("you@ucsc.edu"), { target: { value: "user@ucsc.edu" } });
     fireEvent.change(screen.getByPlaceholderText("Create a password"), { target: { value: "password123" } });
     fireEvent.submit(screen.getByRole("button", { name: /create account/i }).closest("form")!);
 
-    await waitFor(() => expect(mockPush).toHaveBeenCalledWith("/"));
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: /check your email/i })).toBeInTheDocument()
+    );
+    // The verification prompt shows the address and a link back to sign in; no redirect.
+    expect(screen.getByText("user@ucsc.edu")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /go to sign in/i })).toHaveAttribute("href", "/signin");
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it("shows an error message when sign-up fails", async () => {
@@ -124,7 +130,9 @@ describe("SignUpPage", () => {
 
     expect(screen.getByRole("button", { name: /creating account/i })).toBeDisabled();
 
-    resolveSignUp({ data: { user: null, session: null }, error: null });
+    // Resolve with an error so the form (and its submit button) stays mounted;
+    // a successful sign-up would swap the form out for the verification screen.
+    resolveSignUp({ data: { user: null, session: null }, error: { message: "nope" } } as Awaited<ReturnType<typeof supabaseModule.supabase.auth.signUp>>);
     await waitFor(() => expect(screen.getByRole("button", { name: /create account/i })).not.toBeDisabled());
   });
 });

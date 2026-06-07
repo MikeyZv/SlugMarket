@@ -2,18 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 
 export default function SignUpPage() {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
@@ -39,8 +38,30 @@ export default function SignUpPage() {
     if (error) {
       setError(error.message);
     } else {
-      router.push("/");
+      setVerified(true);
     }
+  }
+
+  if (verified) {
+    return (
+      <main className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col items-center gap-4 text-center">
+            <div className="w-16 h-16 rounded-full bg-[#0F2044]/10 flex items-center justify-center">
+              <Mail size={32} className="text-[#0F2044]" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">Check your email</h1>
+            <p className="text-gray-500">
+              We sent a verification link to <span className="font-semibold text-gray-800">{email}</span>. Click the link in that email to activate your account.
+            </p>
+            <p className="text-gray-400 text-sm">Didn&apos;t get it? Check your spam folder.</p>
+            <Link href="/signin" className="mt-2 w-full rounded-xl bg-[#0F2044] py-3 text-lg font-semibold text-white hover:bg-[#162d5a] transition text-center">
+              Go to sign in
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
