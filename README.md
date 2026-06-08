@@ -8,6 +8,9 @@ SlugMarket/
 ├── README.md
 ├── documentation/                   # Sprint plans, reports, and burnup charts
 │   ├── images/
+│   ├── code-standards.md            # Coding standards & conventions
+│   ├── test-plan.md
+│   ├── definition-of-done.md
 │   ├── release-plan.md
 │   └── sprint-{1..4}-{plan,report}.md
 └── slugmarket_next/                 # Next.js (App Router) application
