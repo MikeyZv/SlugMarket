@@ -110,6 +110,20 @@ function MessagesContent() {
                     )
                 }
             )
+            .on(
+                "postgres_changes",
+                { event: "UPDATE", schema: "public", table: "offers" },
+                (payload) => {
+                    const updated = payload.new as { id: string; status: OfferDetails["status"] }
+                    setMessages((prev) =>
+                        prev.map((msg) =>
+                            msg.offer?.id === updated.id
+                                ? { ...msg, offer: { ...msg.offer!, status: updated.status } }
+                                : msg
+                        )
+                    )
+                }
+            )
             .subscribe()
 
         return () => { supabase.removeChannel(channel) }
