@@ -49,6 +49,7 @@ export default function BookmarksPage() {
     );
   }
 
+// If the user is not authenticated, prompt them to sign in to view their bookmarks.
   if (!user) {
     return (
       <main className="max-w-6xl mx-auto px-6 py-12">
