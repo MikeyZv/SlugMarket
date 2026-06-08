@@ -9,6 +9,7 @@ type Props = {
     onStatusChange: (offerId: string, status: "accepted" | "declined") => void
 }
 
+// Offers expire 48 hours after creation. This function calculates the expiry label and whether it's expired.
 function getExpiryLabel(createdAt: string): { label: string; expired: boolean } {
     const expiresAt = new Date(new Date(createdAt).getTime() + 48 * 60 * 60 * 1000)
     const msLeft = expiresAt.getTime() - Date.now()
