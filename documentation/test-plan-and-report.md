@@ -1,4 +1,4 @@
-# TEST PLAN
+# TEST PLAN AND REPORT
 
 ## Purpose
 
