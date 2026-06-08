@@ -4,6 +4,7 @@ import { useState } from "react";
 import ListingCard from "./ListingCard";
 import { Listing } from "@/lib/types";
 import Dropdown, { Option } from "./Dropdown";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
 const CATEGORIES: Option[] = [
   { label: "All Categories", value: "" },
@@ -48,6 +49,7 @@ function FilterDropdown({ label, ...props }: { label: string } & React.Component
 export default function FilterForm({ initialProducts }: { initialProducts: Listing[] }) {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [products, setProducts] = useState<Listing[]>(initialProducts);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const set = (key: string, value: string) => setFilters((prev) => ({ ...prev, [key]: value }));
 
@@ -69,7 +71,20 @@ export default function FilterForm({ initialProducts }: { initialProducts: Listi
         onSubmit={apply}
         className="w-full bg-white rounded-2xl shadow-md border border-gray-100 p-5 mb-8"
       >
-        <div className="flex flex-col min-[770px]:flex-row gap-4 items-end">
+        {/* Mobile toggle */}
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((o) => !o)}
+          className="min-[770px]:hidden w-full flex items-center justify-between text-sm font-semibold text-[#0F2044] cursor-pointer"
+        >
+          <span className="flex items-center gap-2">
+            <SlidersHorizontal size={16} />
+            Filters{hasFilters ? " (active)" : ""}
+          </span>
+          <ChevronDown size={16} className={`transition-transform duration-200 ${filtersOpen ? "rotate-180" : ""}`} />
+        </button>
+
+        <div className={`flex flex-col min-[770px]:flex-row gap-4 items-end ${filtersOpen ? "mt-4" : "hidden"} min-[770px]:flex`}>
           <FilterDropdown label="Category" options={CATEGORIES} value={filters.category ?? ""} onSelect={(v) => set("category", v)} />
           <FilterDropdown label="Condition" options={CONDITIONS} value={filters.condition ?? ""} onSelect={(v) => set("condition", v)} />
 
