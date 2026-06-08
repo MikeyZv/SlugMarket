@@ -96,7 +96,7 @@ function MessagesContent() {
                     if (raw.offer_id) {
                         const { data: offer } = await supabase
                             .from("offers")
-                            .select("id, amount, status, seller_id, buyer_id, listing:product_listings(id, title)")
+                            .select("id, amount, status, seller_id, buyer_id, listing:product_listings(id, title, image_urls)")
                             .eq("id", raw.offer_id)
                             .single()
                         msg = { ...raw, offer: offer as OfferDetails | null }
