@@ -74,27 +74,12 @@
 
 **Total for user story 5:** 4 hrs
 
-### User story 6: As a user, I want to report and block a chat so that I can stay clear of inappropriate or rude behavior. (3 SP)
-- **Task 1:** Create blocked_users table. (Time est: 1 hr, 0.33 SP)
-
-- **Task 2:** Add "Report User" UI in dropdown menu in chat. (Time est: 1 hr, 1 SP)
-    - Report will reuse existing report modal and reports table
-    - Insert with reported_conversation_id
-
-- **Task 3:** Add "Block User" action in dropdown menu in chat. (Time est: 1 hr, 1 SP)
-
-- **Task 4:** Prevent blocked users from sending messages. (Time est: 1 hr, 0.33 SP)
-
-- **Task 5:** Hide conversations and listings from blocked users. (Time est: 1 hr, 0.33 SP)
-
-**Total for user story 6:** 5 hrs
-
-### User story 7: As a user, I want an inbox so that I can be notified of agreements being made or a person interested in my item, etc. (5 SP)
+### User story 6: As a user, I want an inbox so that I can be notified of agreements being made or a person interested in my item, etc. (5 SP)
 - **Task 1:** Create inbox UI/modal. (Time est: 5 hrs, 5 SP)
     - Notifies if a person is interested or offer made/accepted
     - Shows time happened
 
-**Total for user story 7:** 5 hrs
+**Total for user story 6:** 5 hrs
 
 ### Team roles:
 - Andrew Le - Product Owner
