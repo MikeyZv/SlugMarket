@@ -1,89 +1,167 @@
-# SlugMarket Coding Standards
+SlugMarket Coding Standards
+1. Purpose
+This document defines the coding standards for SlugMarket. Its purpose is to keep the codebase consistent, readable, secure, and maintainable as multiple team members contribute to the project.
+2. General Principles
+Prefer simple, readable solutions.
+Do not duplicate functionality that already exists in a library, helper, or reusable component.
+Do not swallow errors or fail silently; handle errors clearly and log useful information.
+Do not write code for imagined future features unless there is a clear current need.
+Keep components, functions, and files focused on one responsibility.
+3. Language and Framework Standards
+New code should be written in TypeScript.
+Use Next.js App Router conventions for pages, layouts, and route groups.
+Use functional React components only.
+Use "use client" only when interactivity, hooks, or browser APIs are required.
+4. File and Naming Conventions
+4.1 Components
+Use PascalCase for component names and filenames.
+Examples:
+ListingCard.tsx
+ProductImageGallery.tsx
+4.2 Variables and Functions
+Use camelCase for variables and functions.
+Examples:
+fetchBookmarkedProducts
+handleSignOut
+4.3 Types, Interfaces, and Enums
+Use PascalCase for all type aliases, interfaces, and enums.
+Examples:
+type OfferStatus = "pending" | "accepted" | "declined" | "withdrawn";
 
-These standards reflect the conventions already used across `slugmarket_next/`.
-Follow them for consistency. When in doubt, match the surrounding code.
+interface MessageProps {
+ body: string;
+ senderId: string;
+}
+4.4 Boolean Variables
+Boolean variables should start with is, has, or can.
+Examples:
+isLoading
+hasError
+canEdit
+4.5 Routes
+Follow Next.js route naming conventions.
+Example:
+app/(main)/products/[id]/page.tsx
+4.6 Database Helpers
+Put Supabase fetch/query helpers in lib/.
+Example:
+lib/fetchProducts.ts
+5. Type Annotation Standards
+5.1 General Rules
+Always annotate function parameter and return types explicitly.
+Let TypeScript infer simple local variable types where the type is obvious.
+Avoid any. Use unknown when the type is truly unknown and narrow it before use.
+Avoid as type casts unless there is no alternative. Document why when used.
+Good:
+async function fetchOffer(id: string): Promise<Offer | null> {
+ // ...
+}
+Avoid:
+async function fetchOffer(id) {
+ // ...
+}
+5.2 Null and Undefined
+Use T | null when null is a valid, expected state.
+Use T | undefined only for optional function parameters or missing object fields.
+Do not use non-null assertion ! unless you are certain the value cannot be null at that point.
+Good:
+const profile: Profile | null = null;
+Avoid unless justified:
+const profile = data!;
+5.3 Props
+Always define a type or interface for component props. Do not use inline prop types for non-trivial components.
+Example:
+type Props = {
+ listingId: string;
+ listingPrice: number;
+ sellerId: string;
+};
 
-> ⚠️ **Next.js version notice** — see `slugmarket_next/AGENTS.md`. This Next.js
-> release has breaking changes vs. older docs. Read the relevant guide under
-> `node_modules/next/dist/docs/` before writing framework code.
+export default function MakeOfferButton({
+ listingId,
+ listingPrice,
+ sellerId,
+}: Props) {
+ // ...
+}
+5.4 Avoid Overly Broad Types
+Prefer specific union types over string when the set of values is known.
+Good:
+status: "pending" | "accepted" | "declined" | "withdrawn";
+Avoid:
+status: string;
+5.5 Importing Types
+Use import type when importing types only, to keep runtime imports clean.
+Example:
+import type { Listing } from "@/lib/types";
+6. Component Standards
+Prefer small, reusable components with a single responsibility.
+Avoid deeply nested JSX when possible.
+Shared UI belongs in app/components/.
+Page files should primarily handle layout and data flow, not large amounts of UI duplication.
+7. State Management
+Use local state for local UI behavior.
+Use shared providers only when state truly needs to be shared across multiple areas.
+Keep state as close as possible to where it is used.
+Do not introduce global state unnecessarily.
+8. Styling Standards
+Use Tailwind CSS for styling.
+Keep spacing, typography, and button styles consistent across the app.
+Reuse existing class patterns where possible.
+Avoid inline styles unless necessary.
+UI should be responsive on desktop.
+9. Environment Variables and Secrets
+Secrets must never be hardcoded in source files.
+Supabase URL and keys must be stored in .env.local.
+.env.local must not be committed unless explicitly approved by the team.
+Missing configuration should fail clearly with a useful error message.
+10. Error Handling
+Catch and handle errors for all async database operations.
+Log useful technical errors for debugging.
+Show user-friendly fallback UI when possible.
+Network failures, missing auth, and empty data should be handled gracefully.
+11. Security Standards
+Validate and sanitize user input.
+Do not trust form data or query parameters.
+Restrict access to user-specific data such as bookmarks, messages, and profiles.
+Review Supabase row-level security policies carefully.
+Use HTTPS links for external assets.
+Consider common web security risks: XSS, CSRF, SQL injection, SSRF, IDOR, and open redirects.
+12. Testing Standards
+Use both unit tests and integration tests when possible.
+Prioritize tests for:
+Search logic
+Bookmark save/remove behavior
+Listing creation validation
+Profile/bookmark fetch helpers
+Auth-dependent UI states
+Do not test private implementation details unnecessarily.
+Put important debugging information in tests rather than leaving debug logs in production code.
+13. Git and Collaboration Standards
+Pull the latest changes before starting new work.
+Write clear, focused commit messages.
+Use code review before merging to main.
+Main branch should require passing tests and review.
+Keep commits scoped to one feature or fix when possible.
+Assign yourself to a task before starting work.
+When a task is finished, move it to done/closed in the team tracker right away.
+Commit message examples:
+Add bookmarked items page
+Refine product page layout
+Connect navbar search to URL query
+14. CI/CD and Tooling
+Keep package-lock.json committed.
+Avoid overly complex shell scripts; move complex automation into TypeScript.
+Run linting and tests before merging.
+15. Code Review Checklist
+Before submitting code, ask:
+Does this duplicate logic that already exists?
+Is the code readable and consistent with the rest of the app?
+Are errors handled clearly?
+Are security and authentication concerns considered?
+Does this work with the current Supabase schema and policies?
+Is the UI consistent with the rest of SlugMarket?
 
-## Stack
 
-- **Next.js 16** (App Router) · **React 19** · **TypeScript 5** (`strict: true`)
-- **Tailwind CSS v4** for styling · **lucide-react** for icons
-- **Supabase** (`@supabase/supabase-js`, `@supabase/ssr`) for data, auth, storage
-- **Vitest** + **Testing Library** for tests
 
-## Project layout
 
-- `app/` — routes (App Router). Route groups: `(auth)` and `(main)`.
-- `app/components/` — shared React components, with colocated `__tests__/`.
-- `app/actions/` — server actions (e.g. `revalidateListings`).
-- `app/api/` — route handlers.
-- `lib/` — framework-agnostic helpers, types, and the Supabase client.
-- Use the `@/*` path alias for imports from the project root
-  (e.g. `@/lib/supabase`, `@/app/actions/listings`) instead of long relative paths.
-  Sibling files may use relative imports (e.g. `./AuthProvider`).
-
-## TypeScript
-
-- `strict` mode is on — no implicit `any`, handle `null`/`undefined` explicitly.
-- Type component props with a local `type XProps = { ... }` declaration; mark
-  optional props with `?` (e.g. `className?: string`).
-- Prefer precise types over `any`. Use type guards for narrowing, e.g.
-  `.filter((p): p is string => p !== null)`.
-- Access required env vars through `process.env.NAME!` only in trusted setup
-  modules (see `lib/supabase.ts`). Never hard-code secrets.
-
-## Components
-
-- Add `"use client";` as the first line of any component using hooks, state,
-  browser APIs, or event handlers. Leave it off for server components.
-- One component per file; **default export** the component. Name the file after
-  the component in PascalCase (`DeleteButton.tsx`).
-- Import the shared client from `@/lib/supabase` — do not create new clients.
-- Get the current user via the `useAuth()` hook from `AuthProvider`.
-- Guard authorization in the UI where appropriate (e.g.
-  `if (user?.id !== sellerId) return null;`).
-- Manage async UI state with `useState` loading flags; disable buttons and show
-  progress labels ("Deleting...") while a request is in flight.
-- After mutations, call the relevant server action (e.g. `revalidateListings()`)
-  and navigate with `useRouter()` from `next/navigation`.
-
-## Styling
-
-- Use Tailwind utility classes inline. Allow a `className?` prop to override
-  defaults, falling back with `className ?? "<defaults>"`.
-- Reuse the existing visual language (rounded-xl/2xl, gray-based borders,
-  `transition hover:` states, `disabled:opacity-50`, `cursor-pointer`).
-
-## Error handling
-
-- Check Supabase responses for `error` before proceeding; bail out and reset
-  loading state on failure rather than navigating away.
-- Log unexpected errors with a bracketed component tag:
-  `console.error("[DeleteButton] storage removal error:", error);`
-
-## Naming & exports
-
-- Components & files: PascalCase. Hooks: `useThing`. Helpers/vars: camelCase.
-- Module-level constants: `UPPER_SNAKE_CASE` (e.g. `BUCKET`).
-- **Default export** for components; **named exports** for utilities, types,
-  and server actions.
-
-## Testing
-
-- Colocate tests in `__tests__/` next to the code, named `<Name>.test.tsx`.
-- Use Vitest (`describe` / `it` / `expect`) with Testing Library.
-- Mock modules with `vi.mock`, and hoist shared mock fns via `vi.hoisted`.
-- Reset mocks in `beforeEach`; query by role/text the way a user would
-  (`getByRole("button", { name: /.../i })`).
-- Wrap state-updating interactions in `act(async () => { ... })`.
-- Group related cases with section comments (`// --- Deletion flow ---`).
-- Test behavior and edge cases: visibility, success, failure, and loading states.
-
-## Before committing
-
-- `npm run lint` — ESLint (`eslint-config-next`, core-web-vitals + TS) must pass.
-- `npm run test:run` — the Vitest suite must pass.
-- `npm run build` — should succeed for production-affecting changes.
