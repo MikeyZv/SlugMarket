@@ -55,6 +55,7 @@
 **User Stories:**  
 - “As a user, I want to search listings by keyword…”  
 - “As a user, I want to filter listings so that I can narrow results by price or category.”  
+
 **Acceptance Criteria:**  
 - Search bar filters listings by title/description.  
 - Filters update results without reloading the page.  
@@ -75,6 +76,7 @@
 **User Stories:**  
 - “As a user I want to review or rate sellers and buyers…”  
 - “As a user, I want my ratings/reviews to display on my profile…”  
+
 **Acceptance Criteria:**  
 - Users can leave a rating and optional review.  
 - Reviews appear on profile pages.  
