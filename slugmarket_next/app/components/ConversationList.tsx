@@ -3,6 +3,9 @@
 import type { Conversation } from "@/lib/types"
 import { formatTime } from "@/lib/utils"
 
+// This component renders the list of conversations on the left side of the messaging page. 
+// It shows the other user's name, avatar, and a preview of the last message. 
+// It also handles the loading state and empty state when there are no conversations.
 type Props = {
     conversations: Conversation[]
     selectedId: string | null
